@@ -52,10 +52,10 @@
 
 (def cli-options [["-v" "--version" "print version and exit"]
                   ["-p" "--platform PLATFORM"
-                   "select platform, supported are linux / osx / sunos / common"
+                   "select platform, supported are linux / osx / sunos / windows"
                    :default "common"
-                   :validate [#(contains? #{"linux" "osx" "sunos" "common"} %)
-                              "supported are linux / osx / common"]]
+                   :validate [#(contains? #{"common" "linux" "osx" "sunos" "windows"} %)
+                              "supported are common / linux / osx / sunos / windows"]]
                   ["-h" "--help" "Show this help"]])
 
 (def version "tldr.cljs v0.1.0")

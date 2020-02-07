@@ -17,7 +17,7 @@ brew install planck
 ## Usage
 
 * `./tldr.cljs <command>` show examples for this command
-* `./tldr.cljs <command> -p <platform>` show command page for the given platform (linux, osx, sunos)
+* `./tldr.cljs <command> -p <platform>` show command page for the given platform (common, linux, osx, sunos, windows)
 
 ## Related
 
