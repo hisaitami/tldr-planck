@@ -50,12 +50,15 @@
     (when (io/exists? page-file)
       (-> (slurp page-file) format print))))
 
-(def cli-options [["-p" "--platform PLATFORM"
+(def cli-options [["-v" "--version" "print version and exit"]
+                  ["-p" "--platform PLATFORM"
                    "select platform, supported are linux / osx / sunos / common"
                    :default "common"
                    :validate [#(contains? #{"linux" "osx" "sunos" "common"} %)
                               "supported are linux / osx / common"]]
                   ["-h" "--help" "Show this help"]])
+
+(def version "tldr.cljs v0.1.0")
 
 (defn usage [options-summary]
   (->> ["usage: tldr.cljs [OPTION]... SEARCH"
@@ -75,6 +78,8 @@
   [args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
     (cond
+      (:version options) ; version => exit OK with version info
+      {:exit-message version :ok? true }
       (:help options) ; help => exit OK with usage summary
       {:exit-message (usage summary) :ok? true}
       errors ; errors => exit with description of errors
