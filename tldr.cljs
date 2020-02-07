@@ -81,7 +81,7 @@
       {:exit-message (error-msg errors)}
       ;; custom validation on arguments
       (= 1 (count arguments))
-      {:page (first arguments) :options options}
+      {:page (io/file-name (first arguments)) :options options}
       :else ; failed custom validation => exit with usage summary
       {:exit-message (usage summary)})))
 
