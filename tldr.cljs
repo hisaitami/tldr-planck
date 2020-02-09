@@ -56,7 +56,7 @@
                    :default "common"
                    :validate [#(contains? #{"common" "linux" "osx" "sunos" "windows"} %)
                               "supported are common / linux / osx / sunos / windows"]]
-                  ["-h" "--help" "Show this help"]])
+                  ["-h" "--help" "show this help"]])
 
 (def version "tldr.cljs v0.1.0")
 
