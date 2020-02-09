@@ -6,7 +6,6 @@
   (:require [planck.core :refer [line-seq with-open slurp exit]]
             [planck.io :as io]
             [planck.environ :refer [env]]
-            [planck.shell :as shell]
             [clojure.string :as str]
             [clojure.tools.cli :refer [parse-opts]]))
 
@@ -38,7 +37,7 @@
         page-file (str cache-dir "/" page ".md")]
 
     (when-not (io/directory? cache-dir)
-      (shell/sh "mkdir" "-p" cache-dir))
+      (io/make-parents page-file))
 
     (when-not (io/exists? page-file)
       (let [page-data (download platform page)]
