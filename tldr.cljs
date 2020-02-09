@@ -8,7 +8,6 @@
             [planck.environ :refer [env]]
             [planck.shell :as shell]
             [clojure.string :as str]
-            [clojure.pprint :refer [pprint]]
             [clojure.tools.cli :refer [parse-opts]]))
 
 (defn download [platform page]
