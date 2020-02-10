@@ -3,7 +3,7 @@
 
 (ns tldr.core
   "A planck based command-line client for tldr"
-  (:require [planck.core :refer [line-seq with-open slurp exit]]
+  (:require [planck.core :refer [line-seq with-open slurp spit exit]]
             [planck.io :as io]
             [planck.environ :refer [env]]
             [clojure.string :as str]
@@ -40,10 +40,8 @@
       (io/make-parents page-file))
 
     (when-not (io/exists? page-file)
-      (let [page-data (download platform page)]
-        (with-open [wtr (io/writer page-file)]
-          (-write wtr page-data)
-          (-flush wtr))))
+      (if-let [data (download platform page)]
+        (spit page-file data)))
 
     (when (io/exists? page-file)
       (-> (slurp page-file) format print))))
@@ -56,7 +54,7 @@
                               "supported are common / linux / osx / sunos / windows"]]
                   ["-h" "--help" "show this help"]])
 
-(def version "tldr.cljs v0.1.0")
+(def version "tldr.cljs v0.1.1")
 
 (defn usage [options-summary]
   (->> ["usage: tldr.cljs [OPTION]... SEARCH"
