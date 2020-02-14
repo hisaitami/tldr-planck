@@ -18,7 +18,7 @@
   (exit status))
 
 (defn download [platform page]
-  (let [url (str base-url "/" platform "/" page ".md")
+  (let [url (str/join "/" [base-url platform page])
         result (slurp url)]
     (if (= result "404: Not Found\n") (die 1 "Not Found")
       result)))
@@ -42,12 +42,12 @@
       (str/replace #"{{(.+?)}}" (ansi-str :reset :blue "$1" :red))))
 
 (defn display [platform page]
-  (let [page-file (io/file cache-dir platform (str page ".md"))]
+  (let [page-file (io/file cache-dir platform page)]
 
     (when-not (io/exists? page-file)
-      (do
-        (io/make-parents page-file)
-        (if-let [data (download platform page)]
+      (when-let [data (download platform page)]
+        (do
+          (io/make-parents page-file)
           (spit page-file data))))
 
     (when (io/exists? page-file)
@@ -89,7 +89,7 @@
       {:exit-message (error-msg errors)}
       ;; custom validation on arguments
       (= 1 (count arguments))
-      {:page (io/file-name (first arguments)) :options options}
+      {:page (io/file-name (str (first arguments) ".md")) :options options}
       :else ; failed custom validation => exit with usage summary
       {:exit-message (usage summary)})))
 
