@@ -60,7 +60,7 @@
                               "supported are common / linux / osx / sunos / windows"]]
                   ["-h" "--help" "show this help"]])
 
-(def version "tldr.cljs v0.2.0")
+(def version "tldr.cljs v0.2.1")
 
 (defn usage [options-summary]
   (->> ["usage: tldr.cljs [OPTION]... SEARCH"
