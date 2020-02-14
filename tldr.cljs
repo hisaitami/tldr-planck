@@ -36,6 +36,11 @@
       (str/replace #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
       (str/replace #"{{(.+?)}}" (ansi-str :reset :blue "$1" :red))))
 
+(defn create [cache platform page]
+  (when-let [data (download platform page)]
+    (do (io/make-parents cache)
+        (spit cache data))))
+
 (defn fetch [cache]
   (if (io/exists? cache)
     (slurp cache)
@@ -43,13 +48,8 @@
 
 (defn display [platform page]
   (let [cache (io/file cache-dir platform page)]
-
     (when-not (io/exists? cache)
-      (when-let [data (download platform page)]
-        (do
-          (io/make-parents cache)
-          (spit cache data))))
-
+      (create cache platform page))
     (-> cache fetch format println)))
 
 (def cli-options [["-v" "--version" "print version and exit"]
