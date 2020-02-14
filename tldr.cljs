@@ -9,10 +9,19 @@
             [clojure.string :as str]
             [clojure.tools.cli :refer [parse-opts]]))
 
+(def base-url "https://raw.githubusercontent.com/tldr-pages/tldr/master/pages")
+
+(def cache-dir (io/file (:home env) ".tldrc" "tldr-master" "pages"))
+
+(defn die [status msg]
+  (println msg)
+  (exit status))
+
 (defn download [platform page]
-  (let [base-url "https://raw.githubusercontent.com/tldr-pages/tldr/master/pages/"
-        url (str base-url platform "/" page ".md")]
-    (slurp url)))
+  (let [url (str base-url "/" platform "/" page ".md")
+        result (slurp url)]
+    (if (= result "404: Not Found\n") (die 1 "Not Found")
+      result)))
 
 (defn ansi-str [& coll]
   (let [colors {:reset "\u001b[0m"
@@ -33,15 +42,13 @@
       (str/replace #"{{(.+?)}}" (ansi-str :reset :blue "$1" :red))))
 
 (defn display [platform page]
-  (let [cache-dir (str (:home env) "/.tldrc/tldr-master/pages/" platform)
-        page-file (str cache-dir "/" page ".md")]
-
-    (when-not (io/directory? cache-dir)
-      (io/make-parents page-file))
+  (let [page-file (io/file cache-dir platform (str page ".md"))]
 
     (when-not (io/exists? page-file)
-      (if-let [data (download platform page)]
-        (spit page-file data)))
+      (do
+        (io/make-parents page-file)
+        (if-let [data (download platform page)]
+          (spit page-file data))))
 
     (when (io/exists? page-file)
       (-> (slurp page-file) format print))))
@@ -85,10 +92,6 @@
       {:page (io/file-name (first arguments)) :options options}
       :else ; failed custom validation => exit with usage summary
       {:exit-message (usage summary)})))
-
-(defn die [status msg]
-  (println msg)
-  (exit status))
 
 (defn -main [& args]
   (let [{:keys [page options exit-message ok?]} (validate-args args)]
