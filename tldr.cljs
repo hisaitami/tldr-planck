@@ -42,16 +42,16 @@
       (str/replace #"{{(.+?)}}" (ansi-str :reset :blue "$1" :red))))
 
 (defn display [platform page]
-  (let [page-file (io/file cache-dir platform page)]
+  (let [cache (io/file cache-dir platform page)]
 
-    (when-not (io/exists? page-file)
+    (when-not (io/exists? cache)
       (when-let [data (download platform page)]
         (do
-          (io/make-parents page-file)
-          (spit page-file data))))
+          (io/make-parents cache)
+          (spit cache data))))
 
-    (when (io/exists? page-file)
-      (-> (slurp page-file) format print))))
+    (when (io/exists? cache)
+      (-> (slurp cache) format print))))
 
 (def cli-options [["-v" "--version" "print version and exit"]
                   ["-p" "--platform PLATFORM"
