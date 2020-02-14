@@ -81,16 +81,24 @@
   [args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
     (cond
-      (:version options) ; version => exit OK with version info
+      ;; version => exit OK with version info
+      (:version options)
       {:exit-message version :ok? true }
-      (:help options) ; help => exit OK with usage summary
+
+      ;; help => exit OK with usage summary
+      (:help options)
       {:exit-message (usage summary) :ok? true}
-      errors ; errors => exit with description of errors
+
+      ;; errors => exit with description of errors
+      errors
       {:exit-message (error-msg errors)}
+
       ;; custom validation on arguments
       (= 1 (count arguments))
       {:page (io/file-name (str (first arguments) ".md")) :options options}
-      :else ; failed custom validation => exit with usage summary
+
+      ;; failed custom validation => exit with usage summary
+      :else
       {:exit-message (usage summary)})))
 
 (defn -main [& args]
