@@ -14,23 +14,24 @@
         url (str base-url platform "/" page ".md")]
     (slurp url)))
 
-(defn ansi [color-name text]
+(defn ansi-str [& coll]
   (let [colors {:reset "\u001b[0m"
                 :red   "\u001b[31m"
                 :green "\u001b[32m"
                 :blue  "\u001b[34m"
                 :white "\u001b[37m"
-                :bright-white "\u001b[37;1m"}]
-    (str (color-name colors) text (:reset colors))))
+                :bright-white "\u001b[37;1m"}
+        escape (fn [s] (if (keyword? s) (colors s) s))]
+    (apply str (map escape coll))))
 
 (defn format [content]
   (-> content
-      (str/replace #"^#\s+(.+)" (str \newline (ansi :bright-white "$1")))
-      (str/replace #"(?m)^> (.+)" (ansi :white "$1"))
+      (str/replace #"^#\s+(.+)" (ansi-str \newline :bright-white "$1" :reset))
+      (str/replace #"(?m)^> (.+)" (ansi-str :white "$1" :reset))
       (str/replace #"(?m):\n$" ":")
-      (str/replace #"(?m)^(- .+)" (ansi :green "$1"))
-      (str/replace #"(?m)^`(.+)`$" (ansi :red "    $1"))
-      (str/replace #"{{(.+?)}}" (str "\u001b[0m" (ansi :blue "$1") "\u001b[31m"))))
+      (str/replace #"(?m)^(- .+)" (ansi-str :green "$1" :reset))
+      (str/replace #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
+      (str/replace #"{{(.+?)}}" (ansi-str :reset :blue "$1" :red))))
 
 (defn display [platform page]
   (let [cache-dir (str (:home env) "/.tldrc/tldr-master/pages/" platform)
