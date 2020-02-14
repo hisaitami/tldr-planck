@@ -13,15 +13,10 @@
 
 (def cache-dir (io/file (:home env) ".tldrc" "tldr-master" "pages"))
 
-(defn die [status msg]
-  (println msg)
-  (exit status))
-
 (defn download [platform page]
   (let [url (str/join "/" [base-url platform page])
-        result (slurp url)]
-    (if (= result "404: Not Found\n") (die 1 "Not Found")
-      result)))
+        ret (slurp url)]
+    (if (= ret "404: Not Found\n") nil ret)))
 
 (defn ansi-str [& coll]
   (let [colors {:reset "\u001b[0m"
@@ -41,6 +36,11 @@
       (str/replace #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
       (str/replace #"{{(.+?)}}" (ansi-str :reset :blue "$1" :red))))
 
+(defn fetch [cache]
+  (if (io/exists? cache)
+    (slurp cache)
+    "This page doesn't exist yet!"))
+
 (defn display [platform page]
   (let [cache (io/file cache-dir platform page)]
 
@@ -50,8 +50,7 @@
           (io/make-parents cache)
           (spit cache data))))
 
-    (when (io/exists? cache)
-      (-> (slurp cache) format print))))
+    (-> cache fetch format println)))
 
 (def cli-options [["-v" "--version" "print version and exit"]
                   ["-p" "--platform PLATFORM"
@@ -73,6 +72,10 @@
 (defn error-msg [errors]
   (str "The following errors occurred while parsing your command:\n\n"
        (str/join \newline errors)))
+
+(defn die [status msg]
+  (println msg)
+  (exit status))
 
 (defn validate-args
   "Validate command line arguments. Either return a map indicating the program
