@@ -3,7 +3,7 @@
 
 (ns tldr.core
   "A planck based command-line client for tldr"
-  (:require [planck.core :refer [line-seq with-open slurp spit exit]]
+  (:require [planck.core :refer [slurp spit exit]]
             [planck.io :as io]
             [planck.environ :refer [env]]
             [clojure.string :as str]
