@@ -20,9 +20,8 @@
                 :green "\u001b[32m"
                 :blue  "\u001b[34m"
                 :white "\u001b[37m"
-                :bright-white "\u001b[37;1m"}
-        escape (fn [s] (if (keyword? s) (colors s) s))]
-    (apply str (map escape coll))))
+                :bright-white "\u001b[37;1m"}]
+    (apply str (replace colors coll))))
 
 (defn format [content]
   (-> content
