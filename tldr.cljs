@@ -63,8 +63,7 @@
 (def version "tldr.cljs v0.2.1")
 
 (defn usage [options-summary]
-  (->> ["usage: tldr.cljs [OPTION]... SEARCH"
-        ""
+  (->> ["usage: ./tldr.cljs [OPTION]... SEARCH\n"
         "available commands:"
         options-summary]
       (str/join \newline)))
