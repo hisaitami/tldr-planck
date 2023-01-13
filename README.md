@@ -21,8 +21,9 @@ usage: ./tldr.cljs [OPTION]... SEARCH
 
 available commands:
   -v, --version                    print version and exit
-  -p, --platform PLATFORM  common  select platform, supported are linux / osx / sunos / windows
   -h, --help                       show this help
+  -p, --platform PLATFORM  common  select platform, supported are linux / osx / sunos / windows
+  -r, --render PATH                render a local page for testing purposes
 ```
 
 ## Related
