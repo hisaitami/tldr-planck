@@ -46,21 +46,28 @@
     (slurp cache)
     "This page doesn't exist yet!"))
 
-(defn display [platform page]
-  (let [cache (io/file cache-dir platform page)]
-    (when-not (io/exists? cache)
-      (create cache platform page))
-    (-> cache fetch format println)))
+(defn display
+  ([page]
+   (-> page fetch format println))
+  ([platform page]
+   (let [cache (io/file cache-dir platform page)]
+     (when-not (io/exists? cache)
+       (create cache platform page))
+     (-> cache display))))
 
 (def cli-options [["-v" "--version" "print version and exit"]
+                  ["-h" "--help" "show this help"]
                   ["-p" "--platform PLATFORM"
                    "select platform, supported are linux / osx / sunos / windows"
                    :default "common"
                    :validate [#(contains? #{"common" "linux" "osx" "sunos" "windows"} %)
                               "supported are common / linux / osx / sunos / windows"]]
-                  ["-h" "--help" "show this help"]])
+                  ["-r" "--render PATH" "render a local page for testing purposes"
+                   :validate [#(io/exists? %)
+                              "file does not exist"]]
+                  ])
 
-(def version "tldr.cljs v0.2.1")
+(def version "tldr.cljs v0.2.2-SNAPSHOT")
 
 (defn usage [options-summary]
   (->> ["usage: ./tldr.cljs [OPTION]... SEARCH\n"
@@ -91,6 +98,10 @@
       (:help options)
       {:exit-message (usage summary) :ok? true}
 
+      ;; render => ensure that file exists
+      (:render options)
+      {:page (:render options) :options options}
+
       ;; errors => exit with description of errors
       errors
       {:exit-message (error-msg errors)}
@@ -105,8 +116,13 @@
 
 (defn -main [& args]
   (let [{:keys [page options exit-message ok?]} (validate-args args)]
-    (if exit-message
-      (die (if ok? 0 1) exit-message)
-      (display (:platform options) page))))
+    (when exit-message
+      (die (if ok? 1 1) exit-message))
+
+    (when (:render options)
+      (display page)
+      (exit 0))
+
+    (display (:platform options) page)))
 
 (apply -main *command-line-args*)
