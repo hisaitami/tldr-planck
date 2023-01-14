@@ -55,10 +55,10 @@
        (create cache platform page))
      (-> cache display))))
 
-(def cli-options [["-v" nil "verbose output"
+(def cli-options [["-v" nil "print verbose output"
                    :id :verbose]
                   [nil "--version" "print version and exit"]
-                  ["-h" "--help" "show this help"]
+                  ["-h" "--help" "print this help and exit"]
                   ["-p" "--platform PLATFORM"
                    "select platform, supported are linux / osx / sunos / windows"
                    :default "common"
@@ -72,7 +72,7 @@
 (def version "tldr.cljs v0.2.2-SNAPSHOT")
 
 (defn usage [options-summary]
-  (->> ["usage: ./tldr.cljs [OPTION]... SEARCH\n"
+  (->> ["usage: ./tldr.cljs [-v] [OPTION]... SEARCH\n"
         "available commands:"
         options-summary]
       (str/join \newline)))

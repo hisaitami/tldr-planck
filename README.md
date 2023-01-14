@@ -17,11 +17,12 @@ brew install planck
 ## Usage
 
 ```
-usage: ./tldr.cljs [OPTION]... SEARCH
+usage: ./tldr.cljs [-v] [OPTION]... SEARCH
 
 available commands:
-  -v, --version                    print version and exit
-  -h, --help                       show this help
+  -v                               print verbose output
+      --version                    print version and exit
+  -h, --help                       print this help and exit
   -p, --platform PLATFORM  common  select platform, supported are linux / osx / sunos / windows
   -r, --render PATH                render a local page for testing purposes
 ```
