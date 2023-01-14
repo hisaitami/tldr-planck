@@ -92,7 +92,7 @@
     (cond
       ;; version => exit OK with version info
       (:version options)
-      {:exit-message version :ok? true }
+      {:exit-message version :ok? true}
 
       ;; help => exit OK with usage summary
       (:help options)
