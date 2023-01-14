@@ -119,7 +119,7 @@
 (defn -main [& args]
   (let [{:keys [page options exit-message ok?]} (validate-args args)]
     (when exit-message
-      (die (if ok? 1 1) exit-message))
+      (die (if ok? 0 1) exit-message))
 
     (when (:render options)
       (display page)
