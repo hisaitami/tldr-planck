@@ -55,7 +55,9 @@
        (create cache platform page))
      (-> cache display))))
 
-(def cli-options [["-v" "--version" "print version and exit"]
+(def cli-options [["-v" nil "verbose output"
+                   :id :verbose]
+                  [nil "--version" "print version and exit"]
                   ["-h" "--help" "show this help"]
                   ["-p" "--platform PLATFORM"
                    "select platform, supported are linux / osx / sunos / windows"
