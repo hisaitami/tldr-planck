@@ -9,7 +9,7 @@
             [clojure.string :as str]
             [clojure.tools.cli :refer [parse-opts]]))
 
-(def base-url "https://raw.githubusercontent.com/tldr-pages/tldr/master/pages")
+(def base-url "https://raw.github.com/tldr-pages/tldr/main/pages")
 
 (def cache-dir (io/file (:home env) ".tldrc" "tldr-master" "pages"))
 
