@@ -6,12 +6,15 @@
   (:require [planck.core :refer [slurp spit exit]]
             [planck.io :as io]
             [planck.environ :refer [env]]
+            [planck.shell :as shell :refer [sh]]
             [clojure.string :as str]
             [clojure.tools.cli :refer [parse-opts]]))
 
 (def base-url "https://raw.github.com/tldr-pages/tldr/main/pages")
 
-(def cache-dir (io/file (:home env) ".tldrc" "tldr-master" "pages"))
+(def tldr-home ".tldrc")
+
+(def cache-dir (io/file (:home env) tldr-home "tldr-master" "pages"))
 
 (defn download [platform page]
   (let [url (str/join "/" [base-url platform page])
@@ -55,10 +58,20 @@
        (create cache platform page))
      (-> cache display))))
 
+(defn clear-localdb [verbose]
+  (shell/with-sh-dir (:home env)
+    (let [{:keys [exit out err]} (sh "rm" "-rf" tldr-home)]
+      (if (true? err) (println err)
+        (println "Successfully removed"
+                 (if verbose (str (io/file (:home env) tldr-home))
+                   "local database")))
+      exit)))
+
 (def cli-options [["-v" nil "print verbose output"
                    :id :verbose]
                   [nil "--version" "print version and exit"]
                   ["-h" "--help" "print this help and exit"]
+                  ["-c" "--clear-cache" "clear local database"]
                   ["-p" "--platform PLATFORM"
                    "select platform, supported are linux / osx / sunos / windows"
                    :default "common"
@@ -100,6 +113,9 @@
       (:help options)
       {:exit-message (usage summary) :ok? true}
 
+      (:clear-cache options)
+      {:options options}
+
       ;; render => ensure that file exists
       (:render options)
       {:page (:render options) :options options}
@@ -120,6 +136,9 @@
   (let [{:keys [page options exit-message ok?]} (validate-args args)]
     (when exit-message
       (die (if ok? 0 1) exit-message))
+
+    (when (:clear-cache options)
+      (-> (clear-localdb (:verbose options)) exit))
 
     (when (:render options)
       (display page)
