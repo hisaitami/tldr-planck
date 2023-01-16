@@ -58,6 +58,10 @@
        (create cache platform page))
      (-> cache display))))
 
+(defn update-localdb [verbose]
+  (println "TODO:" "Successfully updated local database")
+  0)
+
 (defn clear-localdb [verbose]
   (shell/with-sh-dir (:home env)
     (let [{:keys [exit out err]} (sh "rm" "-rf" tldr-home)]
@@ -71,6 +75,7 @@
                    :id :verbose]
                   [nil "--version" "print version and exit"]
                   ["-h" "--help" "print this help and exit"]
+                  ["-u" "--update" "update local database"]
                   ["-c" "--clear-cache" "clear local database"]
                   ["-p" "--platform PLATFORM"
                    "select platform, supported are linux / osx / sunos / windows"
@@ -113,6 +118,9 @@
       (:help options)
       {:exit-message (usage summary) :ok? true}
 
+      (:update options)
+      {:options options}
+
       (:clear-cache options)
       {:options options}
 
@@ -136,6 +144,9 @@
   (let [{:keys [page options exit-message ok?]} (validate-args args)]
     (when exit-message
       (die (if ok? 0 1) exit-message))
+
+    (when (:update options)
+      (-> (update-localdb (:verbose options)) exit))
 
     (when (:clear-cache options)
       (-> (clear-localdb (:verbose options)) exit))
