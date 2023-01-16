@@ -23,6 +23,7 @@ available commands:
   -v                               print verbose output
       --version                    print version and exit
   -h, --help                       print this help and exit
+  -c, --clear-cache                clear local database
   -p, --platform PLATFORM  common  select platform, supported are linux / osx / sunos / windows
   -r, --render PATH                render a local page for testing purposes
 ```
