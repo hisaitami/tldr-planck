@@ -14,7 +14,7 @@
 
 (def tldr-home ".tldrc")
 
-(def cache-dir (io/file (:home env) tldr-home "tldr-master" "pages"))
+(def cache-dir (io/file (:home env) tldr-home "tldr" "pages"))
 
 (defn download [platform page]
   (let [url (str/join "/" [base-url platform page])
