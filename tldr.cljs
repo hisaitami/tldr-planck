@@ -16,6 +16,10 @@
 
 (def cache-dir (io/file (:home env) tldr-home "tldr" "pages"))
 
+(def zip-file "main.zip")
+
+(def zip-url (str "https://github.com/tldr-pages/tldr/archive/" zip-file))
+
 (defn download [platform page]
   (let [url (str/join "/" [base-url platform page])
         ret (slurp url)]
@@ -58,9 +62,34 @@
        (create cache platform page))
      (-> cache display))))
 
+(defn mkdtemp [template]
+  (let [{:keys [exit out err]} (sh "mktemp" "-d" template)]
+    (if (true? err)
+      (do (println "Error: Creating Directory:" template) nil)
+      (str/trim out))))
+
+(defn download-zip [url path]
+  (let [{:keys [exit out err]} (sh "curl" "-sL" url "-o" path)]
+    (if (true? err)
+      (do (println "Error: Downloading File:" url) nil)
+      path)))
+
 (defn update-localdb [verbose]
-  (println "TODO:" "Successfully updated local database")
-  0)
+  (when-let [tmp-dir (mkdtemp "/tmp/tldrXXXXXX")]
+    (when-let [file (download-zip zip-url (str (io/file tmp-dir zip-file)))]
+      (when verbose (println "Successfully downloaded:" file))
+      (shell/with-sh-dir (:home env)
+        (sh "unzip" "-u" file "-d" tldr-home)
+        (let [old-tldr (str (io/file tldr-home "tldr"))
+              new-tldr (str (io/file tldr-home "tldr-main"))]
+          (sh "rm" "-rf" old-tldr)
+          (sh "mv" new-tldr old-tldr)))
+      (when (io/directory? tmp-dir) (sh "rm" "-rf" tmp-dir))
+      (println "Successfully updated local database")
+      0 ;return ok
+      ))
+  1 ;return err
+  )
 
 (defn clear-localdb [verbose]
   (shell/with-sh-dir (:home env)
@@ -87,7 +116,7 @@
                               "file does not exist"]]
                   ])
 
-(def version "tldr.cljs v0.2.2")
+(def version "tldr.cljs v0.3.0-SNAPSHOT")
 
 (defn usage [options-summary]
   (->> ["usage: ./tldr.cljs [-v] [OPTION]... SEARCH\n"
