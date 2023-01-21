@@ -169,21 +169,29 @@
       :else
       {:exit-message (usage summary)})))
 
-(defn -main [& args]
+(defn -main
+  "The main entry point of this program."
+  [& args]
   (let [{:keys [page options exit-message ok?]} (validate-args args)]
-    (when exit-message
-      (die (if ok? 0 1) exit-message))
+    (cond
+      ;; exit on error
+      exit-message
+      (die (if ok? 0 1) exit-message)
 
-    (when (:update options)
-      (-> (update-localdb (:verbose options)) exit))
+      ;; update local database
+      (:update options)
+      (-> (update-localdb (:verbose options)) exit)
 
-    (when (:clear-cache options)
-      (-> (clear-localdb (:verbose options)) exit))
+      ;; clear local database
+      (:clear-cache options)
+      (-> (clear-localdb (:verbose options)) exit)
 
-    (when (:render options)
+      ;; render a local page for testing purposes
+      (:render options)
       (display page)
-      (exit 0))
 
-    (display (:platform options) page)))
+      ;; otherwise, display the specified page
+      :else
+      (display (:platform options) page))))
 
 (apply -main *command-line-args*)
