@@ -111,6 +111,9 @@
                    :default "common"
                    :validate [#(contains? #{"common" "linux" "osx" "sunos" "windows"} %)
                               "supported are common / linux / osx / sunos / windows"]]
+                  [nil, "--linux" "show command page for Linux"]
+                  [nil, "--osx" "show command page for OSX"]
+                  [nil, "--sunos" "show command page for SunOS"]
                   ["-r" "--render PATH" "render a local page for testing purposes"
                    :validate [#(io/exists? %)
                               "file does not exist"]]])
@@ -162,7 +165,11 @@
 
       ;; custom validation on arguments
       (= 1 (count arguments))
-      {:page (io/file-name (str (first arguments) ".md")) :options options}
+      {:page (io/file-name (str (first arguments) ".md"))
+       :options (assoc options :platform (cond (:linux options) "linux"
+                                                (:osx options) "osx"
+                                                (:sunos options) "sunos"
+                                                :else (:platform options)))}
 
       ;; failed custom validation => exit with usage summary
       :else
