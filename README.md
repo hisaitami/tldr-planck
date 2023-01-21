@@ -26,6 +26,9 @@ available commands:
   -u, --update                     update local database
   -c, --clear-cache                clear local database
   -p, --platform PLATFORM  common  select platform, supported are linux / osx / sunos / windows
+      --linux                      show command page for Linux
+      --osx                        show command page for OSX
+      --sunos                      show command page for SunOS
   -r, --render PATH                render a local page for testing purposes
 ```
 
