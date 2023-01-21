@@ -32,10 +32,11 @@ available commands:
   -r, --render PATH                render a local page for testing purposes
 ```
 
-## Related
+## Referenced projects
 
 * [tldr](https://github.com/tldr-pages/tldr) - Simplified and community-driven man pages
-* [tldr-cpp-client](https://github.com/tldr-pages/tldr-cpp-client) - Command line client in C for BSD, OS X, Linux
+* [tldr-node-client](https://github.com/tldr-pages/tldr-node-client) - Node.js command-line client for tldr pages
+* [tldr-c-client](https://github.com/tldr-pages/tldr-c-client) - C command-line client for tldr pages
 * [tldr-php](https://github.com/BrainMaestro/tldr-php) - PHP Client for tldr
 
 ## License
