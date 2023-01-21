@@ -113,8 +113,7 @@
                               "supported are common / linux / osx / sunos / windows"]]
                   ["-r" "--render PATH" "render a local page for testing purposes"
                    :validate [#(io/exists? %)
-                              "file does not exist"]]
-                  ])
+                              "file does not exist"]]])
 
 (def version "tldr.cljs v0.4.0-SNAPSHOT")
 
