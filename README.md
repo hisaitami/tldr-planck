@@ -25,6 +25,7 @@ available commands:
   -h, --help                       print this help and exit
   -u, --update                     update local database
   -c, --clear-cache                clear local database
+  -l, --list                       list all entries in the local database
   -p, --platform PLATFORM  common  select platform, supported are linux / osx / sunos / windows
       --linux                      show command page for Linux
       --osx                        show command page for OSX

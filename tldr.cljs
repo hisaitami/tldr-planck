@@ -31,7 +31,8 @@
                 :green "\u001b[32m"
                 :blue  "\u001b[34m"
                 :white "\u001b[37m"
-                :bright-white "\u001b[37;1m"}]
+                :bright-white "\u001b[37;1m"
+                :bold  "\u001b[1m"}]
     (apply str (replace colors coll))))
 
 (defn format [content]
@@ -100,12 +101,23 @@
                    "local database")))
       exit)))
 
+(defn list-localdb [platform verbose]
+  (let [path (io/file cache-dir platform)]
+    (when-not (io/exists? path)
+      (update-localdb verbose))
+
+    (println (ansi-str :bold "Pages for " platform :reset))
+    (doseq [file (io/list-files path)]
+      (let [entry (str/replace (io/file-name file) #".md$" "")]
+        (println entry)))))
+
 (def cli-options [["-v" nil "print verbose output"
                    :id :verbose]
                   [nil "--version" "print version and exit"]
                   ["-h" "--help" "print this help and exit"]
                   ["-u" "--update" "update local database"]
                   ["-c" "--clear-cache" "clear local database"]
+                  ["-l" "--list" "list all entries in the local database"]
                   ["-p" "--platform PLATFORM"
                    "select platform, supported are linux / osx / sunos / windows"
                    :default "common"
@@ -142,7 +154,9 @@
   should exit (with a error message, and optional ok status), or a map
   indicating the action the program should take and the options provided."
   [args]
-  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
+  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
+        options (assoc options :platform (detect-platform options))]
+
     (cond
       ;; version => exit OK with version info
       (:version options)
@@ -158,6 +172,9 @@
       (:clear-cache options)
       {:options options}
 
+      (:list options)
+      {:options options}
+
       ;; render => ensure that file exists
       (:render options)
       {:page (:render options) :options options}
@@ -168,8 +185,7 @@
 
       ;; custom validation on arguments
       (= 1 (count arguments))
-      {:page (io/file-name (str (first arguments) ".md"))
-       :options (assoc options :platform (detect-platform options))}
+      {:page (io/file-name (str (first arguments) ".md")) :options options}
 
       ;; failed custom validation => exit with usage summary
       :else
@@ -192,6 +208,10 @@
       ;; clear local database
       (:clear-cache options)
       (-> (clear-localdb (:verbose options)) exit)
+
+      ;; list all entries in the local database
+      (:list options)
+      (list-localdb (:platform options) (:verbose options))
 
       ;; render a local page for testing purposes
       (:render options)
