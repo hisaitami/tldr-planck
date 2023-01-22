@@ -130,7 +130,7 @@
                    :validate [#(io/exists? %)
                               "file does not exist"]]])
 
-(def version "tldr.cljs v0.4.0-SNAPSHOT")
+(def version "tldr.cljs v0.4.0")
 
 (defn usage [options-summary]
   (->> ["usage: ./tldr.cljs [-v] [OPTION]... SEARCH\n"
