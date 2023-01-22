@@ -130,10 +130,6 @@
   (str "The following errors occurred while parsing your command:\n\n"
        (str/join \newline errors)))
 
-(defn die [status msg]
-  (println msg)
-  (exit status))
-
 (defn validate-args
   "Validate command line arguments. Either return a map indicating the program
   should exit (with a error message, and optional ok status), or a map
@@ -179,11 +175,12 @@
   "The main entry point of this program."
   [& args]
   (let [{:keys [page options exit-message ok?]} (validate-args args)]
-    (cond
-      ;; exit on error
-      exit-message
-      (die (if ok? 0 1) exit-message)
 
+    (when exit-message
+      (println exit-message)
+      (exit (if ok? 0 1)))
+
+    (cond
       ;; update local database
       (:update options)
       (-> (update-localdb (:verbose options)) exit)
