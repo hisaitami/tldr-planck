@@ -130,6 +130,13 @@
   (str "The following errors occurred while parsing your command:\n\n"
        (str/join \newline errors)))
 
+(defn detect-platform [options]
+  (cond
+    (:linux options) "linux"
+    (:osx options) "osx"
+    (:sunos options) "sunos"
+    :else (:platform options)))
+
 (defn validate-args
   "Validate command line arguments. Either return a map indicating the program
   should exit (with a error message, and optional ok status), or a map
@@ -162,10 +169,7 @@
       ;; custom validation on arguments
       (= 1 (count arguments))
       {:page (io/file-name (str (first arguments) ".md"))
-       :options (assoc options :platform (cond (:linux options) "linux"
-                                                (:osx options) "osx"
-                                                (:sunos options) "sunos"
-                                                :else (:platform options)))}
+       :options (assoc options :platform (detect-platform options))}
 
       ;; failed custom validation => exit with usage summary
       :else
