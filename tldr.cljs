@@ -27,12 +27,12 @@
 
 (defn ansi-str [& coll]
   (let [colors {:reset "\u001b[0m"
+                :bold  "\u001b[1m"
                 :red   "\u001b[31m"
                 :green "\u001b[32m"
                 :blue  "\u001b[34m"
                 :white "\u001b[37m"
-                :bright-white "\u001b[37;1m"
-                :bold  "\u001b[1m"}]
+                :bright-white "\u001b[37;1m"}]
     (apply str (replace colors coll))))
 
 (defn format [content]
