@@ -157,9 +157,9 @@
         verbose (:verbose options)]
 
     (cond
-      ;; show errors
+      ;; show errors and return as failure
       errors
-      (println (parse-errors errors))
+      (do (println (parse-errors errors)) 1)
 
       ;; show version info
       (:version options)
@@ -171,11 +171,11 @@
 
       ;; update local database
       (:update options)
-      (-> (update-localdb verbose) exit)
+      (update-localdb verbose)
 
       ;; clear local database
       (:clear-cache options)
-      (-> (clear-localdb verbose) exit)
+      (clear-localdb verbose)
 
       ;; list all entries in the local database
       (:list options)
@@ -186,11 +186,14 @@
       (let [page (:render options)]
         (display page))
 
-      ;; otherwise, display the specified page
+      ;; otherwise, display the specified page if there is one argument or
+      ;; show usage and return as failure
       :else
       (if (= 1 (count arguments))
         (let [page (io/file-name (str (first arguments) ".md"))]
           (display platform page))
-        (println (usage summary))))))
+        (do (println (usage summary)) 1)))))
 
-(apply -main *command-line-args*)
+;; call the main entry point and exit with its status.
+(let [status (apply -main *command-line-args*)]
+  (exit status))
