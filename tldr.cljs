@@ -87,25 +87,26 @@
           (sh "mv" new-tldr old-tldr)))
       (when (io/directory? tmp-dir) (sh "rm" "-rf" tmp-dir))
       (println "Successfully updated local database")
-      0 ;return ok
+      0 ;FIXME return ok
       ))
-  1 ;return err
+  1 ;FIXME return err
   )
+
+(defn die [& args]
+  (println (apply str args))
+  (exit 1))
 
 (defn clear-localdb [verbose]
   (shell/with-sh-dir (:home env)
     (let [{:keys [exit out err]} (sh "rm" "-rf" tldr-home)]
-      (if (true? err) (println err)
-        (println "Successfully removed"
-                 (if verbose (str (io/file (:home env) tldr-home))
-                   "local database")))
-      exit)))
+      (or (empty? err) (die err))
+      (println "Successfully removed"
+               (if verbose (:path (io/file (:home env) tldr-home))
+                 "local database")))))
 
 (defn list-localdb [platform verbose]
   (let [path (io/file cache-dir platform)]
-    (when-not (io/exists? path)
-      (update-localdb verbose))
-
+    (or (io/exists? path) (update-localdb verbose))
     (println (ansi-str :bold "Pages for " platform :reset))
     (doseq [file (io/list-files path)]
       (let [entry (str/replace (io/file-name file) #".md$" "")]
@@ -130,7 +131,7 @@
                    :validate [#(io/exists? %)
                               "file does not exist"]]])
 
-(def version "tldr.cljs v0.4.1")
+(def version "tldr.cljs v0.4.2")
 
 (defn usage [options-summary]
   (->> ["usage: ./tldr.cljs [-v] [OPTION]... SEARCH\n"
@@ -138,62 +139,43 @@
         options-summary]
       (str/join \newline)))
 
-(defn parse-errors [errors]
-  (str "The following errors occurred while parsing your command:\n\n"
-       (str/join \newline errors)))
-
 (defn detect-platform [options]
   (cond
-    (:linux options) "linux"
-    (:osx options) "osx"
-    (:sunos options) "sunos"
-    :else (:platform options)))
+    (options :linux) "linux"
+    (options :osx) "osx"
+    (options :sunos) "sunos"
+    :else (options :platform)))
+
+(defn str->page [s]
+  (io/file-name (str s ".md")))
 
 (defn -main
   "The main entry point of this program."
   [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
-        platform (detect-platform options)
-        verbose (:verbose options)]
+        p (detect-platform options)
+        v (options :verbose)]
+
+    (when errors
+      (die "The following errors occurred while parsing your command:\n\n"
+           (str/join \newline errors)))
 
     (cond
-      ;; show errors and return as failure
-      errors
-      (do (println (parse-errors errors)) 1)
-
       ;; show version info
-      (:version options)
-      (println version)
-
+      (options :version) (println version)
       ;; show usage summary
-      (:help options)
-      (println (usage summary))
-
+      (options :help) (println (usage summary))
       ;; update local database
-      (:update options)
-      (update-localdb verbose)
-
+      (options :update) (update-localdb v)
       ;; clear local database
-      (:clear-cache options)
-      (clear-localdb verbose)
-
+      (options :clear-cache) (clear-localdb v)
       ;; list all entries in the local database
-      (:list options)
-      (list-localdb platform verbose)
-
+      (options :list) (list-localdb p v)
       ;; render a local page for testing purposes
-      (:render options)
-      (let [page (:render options)]
-        (display page))
+      (options :render) (display (options :render))
+      ;; if there is only one argument, display it
+      (= (count arguments) 1) (display p (str->page (first arguments)))
+      ;; otherwise show usage and exit as failure
+      :else (die (usage summary)))))
 
-      ;; otherwise, display the specified page if there is one argument or
-      ;; show usage and return as failure
-      :else
-      (if (= 1 (count arguments))
-        (let [page (io/file-name (str (first arguments) ".md"))]
-          (display platform page))
-        (do (println (usage summary)) 1)))))
-
-;; call the main entry point and exit with its status.
-(let [status (apply -main *command-line-args*)]
-  (exit status))
+(set! *main-cli-fn* -main)
