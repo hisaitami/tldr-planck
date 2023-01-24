@@ -130,7 +130,7 @@
                    :validate [#(io/exists? %)
                               "file does not exist"]]])
 
-(def version "tldr.cljs v0.4.0")
+(def version "tldr.cljs v0.4.1")
 
 (defn usage [options-summary]
   (->> ["usage: ./tldr.cljs [-v] [OPTION]... SEARCH\n"
@@ -149,76 +149,48 @@
     (:sunos options) "sunos"
     :else (:platform options)))
 
-(defn validate-args
-  "Validate command line arguments. Either return a map indicating the program
-  should exit (with a error message, and optional ok status), or a map
-  indicating the action the program should take and the options provided."
-  [args]
-  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
-        options (assoc options :platform (detect-platform options))]
-
-    (cond
-      ;; version => exit OK with version info
-      (:version options)
-      {:exit-message version :ok? true}
-
-      ;; help => exit OK with usage summary
-      (:help options)
-      {:exit-message (usage summary) :ok? true}
-
-      (:update options)
-      {:options options}
-
-      (:clear-cache options)
-      {:options options}
-
-      (:list options)
-      {:options options}
-
-      ;; render => ensure that file exists
-      (:render options)
-      {:page (:render options) :options options}
-
-      ;; errors => exit with description of errors
-      errors
-      {:exit-message (parse-errors errors)}
-
-      ;; custom validation on arguments
-      (= 1 (count arguments))
-      {:page (io/file-name (str (first arguments) ".md")) :options options}
-
-      ;; failed custom validation => exit with usage summary
-      :else
-      {:exit-message (usage summary)})))
-
 (defn -main
   "The main entry point of this program."
   [& args]
-  (let [{:keys [page options exit-message ok?]} (validate-args args)]
-
-    (when exit-message
-      (println exit-message)
-      (exit (if ok? 0 1)))
+  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
+        platform (detect-platform options)
+        verbose (:verbose options)]
 
     (cond
+      ;; show errors
+      errors
+      (println (parse-errors errors))
+
+      ;; show version info
+      (:version options)
+      (println version)
+
+      ;; show usage summary
+      (:help options)
+      (println (usage summary))
+
       ;; update local database
       (:update options)
-      (-> (update-localdb (:verbose options)) exit)
+      (-> (update-localdb verbose) exit)
 
       ;; clear local database
       (:clear-cache options)
-      (-> (clear-localdb (:verbose options)) exit)
+      (-> (clear-localdb verbose) exit)
 
       ;; list all entries in the local database
       (:list options)
-      (list-localdb (:platform options) (:verbose options))
+      (list-localdb platform verbose)
 
       ;; render a local page for testing purposes
       (:render options)
-      (display page)
+      (let [page (:render options)]
+        (display page))
 
       ;; otherwise, display the specified page
       :else
-      (display (:platform options) page))))
+      (if (= 1 (count arguments))
+        (let [page (io/file-name (str (first arguments) ".md"))]
+          (display platform page))
+        (println (usage summary))))))
 
 (apply -main *command-line-args*)
