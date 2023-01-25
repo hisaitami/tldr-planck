@@ -64,7 +64,8 @@
      (-> cache display))))
 
 (defn die [& args]
-  (println (apply str args))
+  (binding [*print-fn* *print-err-fn*]
+    (println (apply str args)))
   (exit 1))
 
 (defn mkdtemp [template]
