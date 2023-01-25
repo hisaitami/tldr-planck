@@ -63,38 +63,32 @@
        (create cache platform page))
      (-> cache display))))
 
-(defn mkdtemp [template]
-  (let [{:keys [exit out err]} (sh "mktemp" "-d" template)]
-    (if (true? err)
-      (do (println "Error: Creating Directory:" template) nil)
-      (str/trim out))))
-
-(defn download-zip [url path]
-  (let [{:keys [exit out err]} (sh "curl" "-sL" url "-o" path)]
-    (if (true? err)
-      (do (println "Error: Downloading File:" url) nil)
-      path)))
-
-(defn update-localdb [verbose]
-  (when-let [tmp-dir (mkdtemp "/tmp/tldrXXXXXX")]
-    (when-let [file (download-zip zip-url (str (io/file tmp-dir zip-file)))]
-      (when verbose (println "Successfully downloaded:" file))
-      (shell/with-sh-dir (:home env)
-        (sh "unzip" "-u" file "-d" tldr-home)
-        (let [old-tldr (str (io/file tldr-home "tldr"))
-              new-tldr (str (io/file tldr-home "tldr-main"))]
-          (sh "rm" "-rf" old-tldr)
-          (sh "mv" new-tldr old-tldr)))
-      (when (io/directory? tmp-dir) (sh "rm" "-rf" tmp-dir))
-      (println "Successfully updated local database")
-      0 ;FIXME return ok
-      ))
-  1 ;FIXME return err
-  )
-
 (defn die [& args]
   (println (apply str args))
   (exit 1))
+
+(defn mkdtemp [template]
+  (let [{:keys [exit out err]} (sh "mktemp" "-d" template)]
+    (or (empty? err) (die "Error: Creating Directory:" template))
+    (str/trim out)))
+
+(defn download-zip [url path]
+  (let [{:keys [exit out err]} (sh "curl" "-sL" url "-o" path)]
+    (or (empty? err) (die "Error: Downloading File:" url))
+    path))
+
+(defn update-localdb [verbose]
+  (let [tmp-dir (mkdtemp "/tmp/tldrXXXXXX")
+        zip-path (download-zip zip-url (:path (io/file tmp-dir zip-file)))]
+      (when verbose (println "Successfully downloaded:" zip-path))
+      (shell/with-sh-dir (:home env)
+        (sh "unzip" "-u" zip-path "-d" tldr-home)
+        (let [old (:path (io/file tldr-home "tldr"))
+              new (:path (io/file tldr-home "tldr-main"))]
+          (sh "rm" "-rf" old)
+          (sh "mv" new old)))
+      (when (io/directory? tmp-dir) (sh "rm" "-rf" tmp-dir))
+      (println "Successfully updated local database")))
 
 (defn clear-localdb [verbose]
   (shell/with-sh-dir (:home env)
