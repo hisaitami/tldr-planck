@@ -23,7 +23,7 @@
 (defn download [platform page]
   (let [url (str/join "/" [base-url platform page])
         ret (slurp url)]
-    (if (= ret "404: Not Found\n") nil ret)))
+    (if (= ret "404: Not Found") nil ret)))
 
 (defn ansi-str [& coll]
   (let [colors {:reset "\u001b[0m"
