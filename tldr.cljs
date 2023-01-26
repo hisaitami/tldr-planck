@@ -46,8 +46,8 @@
 
 (defn create [cache platform page]
   (when-let [data (download platform page)]
-    (do (io/make-parents cache)
-        (spit cache data))))
+    (io/make-parents cache)
+    (spit cache data)))
 
 (defn fetch [cache]
   (if (io/exists? cache)
