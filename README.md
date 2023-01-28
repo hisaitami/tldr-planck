@@ -31,6 +31,7 @@ available commands:
       --osx                        show command page for OSX
       --sunos                      show command page for SunOS
   -r, --render PATH                render a local page for testing purposes
+      --random                     show a random command
 ```
 
 ## Referenced projects

@@ -63,6 +63,10 @@
        (create cache platform page))
      (-> cache display))))
 
+(defn rand-page [platform]
+  (let [path (io/file cache-dir platform)]
+    (rand-nth (io/list-files path))))
+
 (defn die [& args]
   (binding [*print-fn* *print-err-fn*]
     (println (apply str args)))
@@ -124,9 +128,10 @@
                   [nil, "--sunos" "show command page for SunOS"]
                   ["-r" "--render PATH" "render a local page for testing purposes"
                    :validate [#(io/exists? %)
-                              "file does not exist"]]])
+                              "file does not exist"]]
+                  [nil, "--random" "show a random command"]])
 
-(def version "tldr.cljs v0.4.3")
+(def version "tldr.cljs v0.5.0")
 
 (defn usage [options-summary]
   (->> ["usage: ./tldr.cljs [-v] [OPTION]... SEARCH\n"
@@ -168,6 +173,8 @@
       (options :list) (list-localdb p v)
       ;; render a local page for testing purposes
       (options :render) (display (options :render))
+      ;; show a random command
+      (options :random) (display (rand-page p))
       ;; if there is only one argument, display it
       (= (count arguments) 1) (display p (str->page (first arguments)))
       ;; otherwise show usage and exit as failure
