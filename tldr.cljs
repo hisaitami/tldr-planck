@@ -73,12 +73,12 @@
   (exit 1))
 
 (defn mkdtemp [template]
-  (let [{:keys [exit out err]} (sh "mktemp" "-d" template)]
+  (let [{:keys [out err]} (sh "mktemp" "-d" template)]
     (or (empty? err) (die "Error: Creating Directory:" template))
     (str/trim out)))
 
 (defn download-zip [url path]
-  (let [{:keys [exit out err]} (sh "curl" "-sL" url "-o" path)]
+  (let [{:keys [err]} (sh "curl" "-sL" url "-o" path)]
     (or (empty? err) (die "Error: Downloading File:" url))
     path))
 
@@ -97,7 +97,7 @@
 
 (defn clear-localdb [verbose]
   (shell/with-sh-dir (:home env)
-    (let [{:keys [exit out err]} (sh "rm" "-rf" tldr-home)]
+    (let [{:keys [err]} (sh "rm" "-rf" tldr-home)]
       (or (empty? err) (die err))
       (println "Successfully removed"
                (if verbose (:path (io/file (:home env) tldr-home))
