@@ -34,6 +34,28 @@ available commands:
       --random                     show a random command
 ```
 
+Examples:
+
+```
+tldr.cljs tar
+tldr.cljs du --platform=osx
+tldr.cljs --list
+tldr.cljs --random
+```
+
+ To control the cache:
+
+ ```
+ tldr.cljs --update
+ tldr.cljs --clear-cache
+ ```
+
+ To render a local file (for testing):
+
+ ```
+ tldr.cljs --render /path/to/file.md
+ ```
+
 ## Referenced projects
 
 * [tldr](https://github.com/tldr-pages/tldr) - Simplified and community-driven man pages
