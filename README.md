@@ -43,7 +43,7 @@ tldr.cljs --list
 tldr.cljs --random
 ```
 
-To display pages in the specified language (such as `ja`, `it`, or `fr`):
+To display pages in the specified language (such as `ja`, `pt_BR`, or `fr`):
 
 ```
 LANG=ja tldr.cljs less

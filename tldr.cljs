@@ -19,12 +19,16 @@
 (def zip-url (str "https://github.com/tldr-pages/tldr/archive/" zip-file))
 
 (defn pages-dir []
-  (let [lang (-> (:lang env) str (subs 0 2))
-        prefix "pages"]
-    (condp = lang
-      "" prefix
-      "en" prefix
-      (str/join "." [prefix lang]))))
+  (let [prefix "pages"
+        lang (->> (:lang env)
+                  str
+                  (re-matches #"^([a-z]{2}(_[A-Z]{2})*).*$")
+                  second)]
+    (cond
+      (nil? lang) prefix
+      (= "en" (subs lang 0 2)) prefix
+      (contains? #{"pt_BR" "pt_PT" "zh_TW"} lang) (str/join "." [prefix lang])
+      :else (str/join "." [prefix (subs lang 0 2)]))))
 
 (defn cache-dir []
   (io/file (:home env) tldr-home "tldr" (pages-dir)))
@@ -140,7 +144,7 @@
                               "file does not exist"]]
                   [nil, "--random" "show a random command"]])
 
-(def version "tldr.cljs v0.6.0")
+(def version "tldr.cljs v0.6.1")
 
 (defn usage [options-summary]
   (->> ["usage: ./tldr.cljs [-v] [OPTION]... SEARCH\n"
