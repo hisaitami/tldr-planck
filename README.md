@@ -43,7 +43,14 @@ tldr.cljs --list
 tldr.cljs --random
 ```
 
- To control the cache:
+To display pages in the specified language (such as `ja`, `it`, or `fr`):
+
+```
+LANG=ja tldr.cljs less
+LANG=fr tldr.cljs --random -p osx
+```
+
+To control the cache:
 
  ```
  tldr.cljs --update

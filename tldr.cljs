@@ -10,18 +10,27 @@
             [clojure.string :as str]
             [clojure.tools.cli :refer [parse-opts]]))
 
-(def base-url "https://raw.github.com/tldr-pages/tldr/main/pages")
+(def base-url "https://raw.github.com/tldr-pages/tldr/main")
 
 (def tldr-home ".tldrc")
-
-(def cache-dir (io/file (:home env) tldr-home "tldr" "pages"))
 
 (def zip-file "main.zip")
 
 (def zip-url (str "https://github.com/tldr-pages/tldr/archive/" zip-file))
 
+(defn pages-dir []
+  (let [lang (-> (:lang env) str (subs 0 2))
+        prefix "pages"]
+    (condp = lang
+      "" prefix
+      "en" prefix
+      (str/join "." [prefix lang]))))
+
+(defn cache-dir []
+  (io/file (:home env) tldr-home "tldr" (pages-dir)))
+
 (defn download [platform page]
-  (let [url (str/join "/" [base-url platform page])
+  (let [url (str/join "/" [base-url (pages-dir) platform page])
         ret (slurp url)]
     (if (= ret "404: Not Found") nil ret)))
 
@@ -58,13 +67,13 @@
   ([page]
    (-> page fetch format println))
   ([platform page]
-   (let [cache (io/file cache-dir platform page)]
+   (let [cache (io/file (cache-dir) platform page)]
      (when-not (io/exists? cache)
        (create cache platform page))
      (-> cache display))))
 
 (defn rand-page [platform]
-  (let [path (io/file cache-dir platform)]
+  (let [path (io/file (cache-dir) platform)]
     (rand-nth (io/list-files path))))
 
 (defn die [& args]
@@ -104,7 +113,7 @@
                  "local database")))))
 
 (defn list-localdb [platform verbose]
-  (let [path (io/file cache-dir platform)]
+  (let [path (io/file (cache-dir) platform)]
     (or (io/exists? path) (update-localdb verbose))
     (println (ansi-str :bold "Pages for " platform :reset))
     (doseq [file (io/list-files path)]
@@ -131,7 +140,7 @@
                               "file does not exist"]]
                   [nil, "--random" "show a random command"]])
 
-(def version "tldr.cljs v0.5.0")
+(def version "tldr.cljs v0.6.0")
 
 (defn usage [options-summary]
   (->> ["usage: ./tldr.cljs [-v] [OPTION]... SEARCH\n"
