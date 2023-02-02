@@ -125,8 +125,7 @@
         (println entry)))))
 
 (def cli-options [["-v" nil "print verbose output"
-                   :id :verbose
-                   :default false]
+                   :id :verbose :default false]
                   [nil "--version" "print version and exit"]
                   ["-h" "--help" "print this help and exit"]
                   ["-u" "--update" "update local database"]
@@ -141,8 +140,7 @@
                   [nil, "--osx" "show command page for OSX"]
                   [nil, "--sunos" "show command page for SunOS"]
                   ["-r" "--render PATH" "render a local page for testing purposes"
-                   :validate [#(io/exists? %)
-                              "file does not exist"]]
+                   :validate [#(io/exists? %) "file does not exist"]]
                   [nil, "--random" "show a random command"]])
 
 (def version "tldr.cljs v0.6.1")
