@@ -10,6 +10,8 @@
             [clojure.string :as str]
             [clojure.tools.cli :refer [parse-opts]]))
 
+(def ^:dynamic *verbose* false)
+
 (def base-url "https://raw.github.com/tldr-pages/tldr/main")
 
 (def tldr-home ".tldrc")
@@ -93,10 +95,10 @@
     (or (empty? err) (die "Error: Downloading File:" url))
     path))
 
-(defn update-localdb [verbose]
+(defn update-localdb []
   (let [tmp-dir (mkdtemp "/tmp/tldrXXXXXX")
         zip-path (download-zip zip-url (:path (io/file tmp-dir zip-file)))]
-      (when verbose (println "Successfully downloaded:" zip-path))
+      (when *verbose* (println "Successfully downloaded:" zip-path))
       (shell/with-sh-dir (:home env)
         (sh "unzip" "-u" zip-path "-d" tldr-home)
         (let [old (:path (io/file tldr-home "tldr"))
@@ -106,17 +108,17 @@
       (when (io/directory? tmp-dir) (sh "rm" "-rf" tmp-dir))
       (println "Successfully updated local database")))
 
-(defn clear-localdb [verbose]
+(defn clear-localdb []
   (shell/with-sh-dir (:home env)
     (let [{:keys [err]} (sh "rm" "-rf" tldr-home)]
       (or (empty? err) (die err))
       (println "Successfully removed"
-               (if verbose (:path (io/file (:home env) tldr-home))
+               (if *verbose* (:path (io/file (:home env) tldr-home))
                  "local database")))))
 
-(defn list-localdb [platform verbose]
+(defn list-localdb [platform]
   (let [path (io/file (cache-dir) platform)]
-    (or (io/exists? path) (update-localdb verbose))
+    (or (io/exists? path) (update-localdb))
     (println (ansi-str :bold "Pages for " platform :reset))
     (doseq [file (io/list-files path)]
       (let [entry (str/replace (io/file-name file) #".md$" "")]
@@ -164,31 +166,31 @@
   "The main entry point of this program."
   [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
-        p (detect-platform options)
-        v (options :verbose)]
+        p (detect-platform options)]
 
     (when errors
       (die "The following errors occurred while parsing your command:\n\n"
            (str/join \newline errors)))
 
-    (cond
-      ;; show version info
-      (options :version) (println version)
-      ;; show usage summary
-      (options :help) (println (usage summary))
-      ;; update local database
-      (options :update) (update-localdb v)
-      ;; clear local database
-      (options :clear-cache) (clear-localdb v)
-      ;; list all entries in the local database
-      (options :list) (list-localdb p v)
-      ;; render a local page for testing purposes
-      (options :render) (display (options :render))
-      ;; show a random command
-      (options :random) (display (rand-page p))
-      ;; if there is only one argument, display it
-      (= (count arguments) 1) (display p (str->page (first arguments)))
-      ;; otherwise show usage and exit as failure
-      :else (die (usage summary)))))
+    (binding [*verbose* (options :verbose)]
+      (cond
+        ;; show version info
+        (options :version) (println version)
+        ;; show usage summary
+        (options :help) (println (usage summary))
+        ;; update local database
+        (options :update) (update-localdb)
+        ;; clear local database
+        (options :clear-cache) (clear-localdb)
+        ;; list all entries in the local database
+        (options :list) (list-localdb p)
+        ;; render a local page for testing purposes
+        (options :render) (display (options :render))
+        ;; show a random command
+        (options :random) (display (rand-page p))
+        ;; if there is only one argument, display it
+        (= (count arguments) 1) (display p (str->page (first arguments)))
+        ;; otherwise show usage and exit as failure
+        :else (die (usage summary))))))
 
 (set! *main-cli-fn* -main)
