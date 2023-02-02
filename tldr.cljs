@@ -125,7 +125,8 @@
         (println entry)))))
 
 (def cli-options [["-v" nil "print verbose output"
-                   :id :verbose]
+                   :id :verbose
+                   :default false]
                   [nil "--version" "print version and exit"]
                   ["-h" "--help" "print this help and exit"]
                   ["-u" "--update" "update local database"]
@@ -172,25 +173,25 @@
       (die "The following errors occurred while parsing your command:\n\n"
            (str/join \newline errors)))
 
-    (binding [*verbose* (options :verbose)]
-      (cond
-        ;; show version info
-        (options :version) (println version)
-        ;; show usage summary
-        (options :help) (println (usage summary))
-        ;; update local database
-        (options :update) (update-localdb)
-        ;; clear local database
-        (options :clear-cache) (clear-localdb)
-        ;; list all entries in the local database
-        (options :list) (list-localdb p)
-        ;; render a local page for testing purposes
-        (options :render) (display (options :render))
-        ;; show a random command
-        (options :random) (display (rand-page p))
-        ;; if there is only one argument, display it
-        (= (count arguments) 1) (display p (str->page (first arguments)))
-        ;; otherwise show usage and exit as failure
-        :else (die (usage summary))))))
+    (set! *verbose* (options :verbose))
+    (cond
+      ;; show version info
+      (options :version) (println version)
+      ;; show usage summary
+      (options :help) (println (usage summary))
+      ;; update local database
+      (options :update) (update-localdb)
+      ;; clear local database
+      (options :clear-cache) (clear-localdb)
+      ;; list all entries in the local database
+      (options :list) (list-localdb p)
+      ;; render a local page for testing purposes
+      (options :render) (display (options :render))
+      ;; show a random command
+      (options :random) (display (rand-page p))
+      ;; if there is only one argument, display it
+      (= (count arguments) 1) (display p (str->page (first arguments)))
+      ;; otherwise show usage and exit as failure
+      :else (die (usage summary)))))
 
 (set! *main-cli-fn* -main)
