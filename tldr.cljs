@@ -98,15 +98,15 @@
 (defn update-localdb []
   (let [tmp-dir (mkdtemp "/tmp/tldrXXXXXX")
         zip-path (download-zip zip-url (:path (io/file tmp-dir zip-file)))]
-      (when *verbose* (println "Successfully downloaded:" zip-path))
-      (shell/with-sh-dir (:home env)
-        (sh "unzip" "-u" zip-path "-d" tldr-home)
-        (let [old (:path (io/file tldr-home "tldr"))
-              new (:path (io/file tldr-home "tldr-main"))]
-          (sh "rm" "-rf" old)
-          (sh "mv" new old)))
-      (when (io/directory? tmp-dir) (sh "rm" "-rf" tmp-dir))
-      (println "Successfully updated local database")))
+    (when *verbose* (println "Successfully downloaded:" zip-path))
+    (shell/with-sh-dir (:home env)
+      (sh "unzip" "-u" zip-path "-d" tldr-home)
+      (let [old (:path (io/file tldr-home "tldr"))
+            new (:path (io/file tldr-home "tldr-main"))]
+        (sh "rm" "-rf" old)
+        (sh "mv" new old)))
+    (when (io/directory? tmp-dir) (sh "rm" "-rf" tmp-dir))
+    (println "Successfully updated local database")))
 
 (defn clear-localdb []
   (shell/with-sh-dir (:home env)
@@ -149,7 +149,7 @@
   (->> ["usage: ./tldr.cljs [-v] [OPTION]... SEARCH\n"
         "available commands:"
         options-summary]
-      (str/join \newline)))
+       (str/join \newline)))
 
 (defn detect-platform [options]
   (cond
