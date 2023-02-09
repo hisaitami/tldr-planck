@@ -165,31 +165,33 @@
   "The main entry point of this program."
   [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
-        p (detect-platform options)]
+        platform (detect-platform options)]
 
     (when errors
       (die "The following errors occurred while parsing your command:\n\n"
            (str/join \newline errors)))
 
-    (set! *verbose* (options :verbose))
-    (cond
+    (set! *verbose* (:verbose options))
+
+    (condp #(contains? %2 %1) options
       ;; show version info
-      (options :version) (println version)
+      :version (println version)
       ;; show usage summary
-      (options :help) (println (usage summary))
+      :help (println (usage summary))
       ;; update local database
-      (options :update) (update-localdb)
+      :update (update-localdb)
       ;; clear local database
-      (options :clear-cache) (clear-localdb)
+      :clear-cache (clear-localdb)
       ;; list all entries in the local database
-      (options :list) (list-localdb p)
+      :list (list-localdb platform)
       ;; render a local page for testing purposes
-      (options :render) (display (options :render))
+      :render (display (:render options))
       ;; show a random command
-      (options :random) (display (rand-page p))
-      ;; if there is only one argument, display it
-      (= (count arguments) 1) (display p (str->page (first arguments)))
+      :random (display (rand-page platform))
+      ;; if there is only one argument, display it,
       ;; otherwise show usage and exit as failure
-      :else (die (usage summary)))))
+      (if (= 1 (count arguments))
+        (display platform (str->page (first arguments)))
+        (die (usage summary))))))
 
 (set! *main-cli-fn* -main)
