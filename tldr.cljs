@@ -143,7 +143,7 @@
                    :validate [#(io/exists? %) "file does not exist"]]
                   [nil, "--random" "show a random command"]])
 
-(def version "tldr.cljs v0.6.1")
+(def version "tldr.cljs v0.6.2")
 
 (defn usage [options-summary]
   (->> ["usage: ./tldr.cljs [-v] [OPTION]... SEARCH\n"
@@ -151,12 +151,15 @@
         options-summary]
        (str/join \newline)))
 
+(defn has-key? [m k]
+  (contains? k m))
+
 (defn detect-platform [options]
-  (cond
-    (options :linux) "linux"
-    (options :osx) "osx"
-    (options :sunos) "sunos"
-    :else (options :platform)))
+  (condp has-key? options
+    :linux "linux"
+    :osx "osx"
+    :sunos "sunos"
+    (:platform options)))
 
 (defn str->page [s]
   (io/file-name (str s ".md")))
@@ -173,7 +176,7 @@
 
     (set! *verbose* (:verbose options))
 
-    (condp #(contains? %2 %1) options
+    (condp has-key? options
       ;; show version info
       :version (println version)
       ;; show usage summary
