@@ -151,24 +151,21 @@
         options-summary]
        (str/join \newline)))
 
-(defn has-key? [m k]
+(defn- has-key? [m k]
   (contains? k m))
 
-(defn detect-platform [options]
+(defn- select-platform [options]
   (condp has-key? options
     :linux "linux"
-    :osx "osx"
+    :osx   "osx"
     :sunos "sunos"
-    (:platform options)))
-
-(defn str->page [s]
-  (io/file-name (str s ".md")))
+    (or (:platform options) "common")))
 
 (defn -main
   "The main entry point of this program."
   [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
-        platform (detect-platform options)]
+        platform (select-platform options)]
 
     (when errors
       (die "The following errors occurred while parsing your command:\n\n"
@@ -177,24 +174,34 @@
     (set! *verbose* (:verbose options))
 
     (condp has-key? options
-      ;; show version info
-      :version (println version)
-      ;; show usage summary
-      :help (println (usage summary))
-      ;; update local database
-      :update (update-localdb)
-      ;; clear local database
-      :clear-cache (clear-localdb)
-      ;; list all entries in the local database
-      :list (list-localdb platform)
-      ;; render a local page for testing purposes
-      :render (display (:render options))
-      ;; show a random command
-      :random (display (rand-page platform))
+      :version ;; show version info
+      (println version)
+
+      :help ;; show usage summary
+      (println (usage summary))
+
+      :update ;; update local database
+      (update-localdb)
+
+      :clear-cache ;; clear local database
+      (clear-localdb)
+
+      :list ;; list all entries in the local database
+      (list-localdb platform)
+
+      :render ;; render a local page for testing purposes
+      (let [page (:render options)]
+        (display page))
+
+      :random ;; show a random command
+      (let [page (rand-page platform)]
+        (display page))
+
       ;; if there is only one argument, display it,
       ;; otherwise show usage and exit as failure
       (if (= 1 (count arguments))
-        (display platform (str->page (first arguments)))
+        (let [page (-> (first arguments) (str ".md") (io/file-name))]
+          (display platform page))
         (die (usage summary))))))
 
 (set! *main-cli-fn* -main)
