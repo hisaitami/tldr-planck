@@ -1,2 +1,1 @@
-{ :linters { :namespace-name-mismatch {:level :info} }
-  :lint-as {org.clojure/tools.cli clojure.tools.cli} }
+{ :linters { :namespace-name-mismatch {:level :info} } }
