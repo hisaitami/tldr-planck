@@ -115,3 +115,4 @@ pom.xml.asc
 
 .rebel_readline_history
 .clj-kondo/.cache
+.cpcache/
