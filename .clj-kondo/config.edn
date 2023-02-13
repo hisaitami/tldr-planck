@@ -1,1 +1,2 @@
-{ :linters { :namespace-name-mismatch {:level :info} } }
+{ :linters { :namespace-name-mismatch {:level :info}
+             :unresolved-var {:exclude [clojure.tools.cli/parse-opts]}}}
