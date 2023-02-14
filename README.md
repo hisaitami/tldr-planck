@@ -30,6 +30,7 @@ available commands:
       --linux                      show command page for Linux
       --osx                        show command page for OSX
       --sunos                      show command page for SunOS
+      --windows                    show command page for Windows
   -r, --render PATH                render a local page for testing purposes
       --random                     show a random command
 ```

@@ -139,11 +139,12 @@
                   [nil, "--linux" "show command page for Linux"]
                   [nil, "--osx" "show command page for OSX"]
                   [nil, "--sunos" "show command page for SunOS"]
+                  [nil, "--windows" "show command page for Windows"]
                   ["-r" "--render PATH" "render a local page for testing purposes"
                    :validate [#(io/exists? %) "file does not exist"]]
                   [nil, "--random" "show a random command"]])
 
-(def version "tldr.cljs v0.6.2")
+(def version "tldr.cljs v0.6.3")
 
 (defn usage [options-summary]
   (->> ["usage: ./tldr.cljs [-v] [OPTION]... SEARCH\n"
@@ -156,9 +157,10 @@
 
 (defn- select-platform [options]
   (condp has-key? options
-    :linux "linux"
-    :osx   "osx"
-    :sunos "sunos"
+    :linux   "linux"
+    :osx     "osx"
+    :sunos   "sunos"
+    :windows "windows"
     (or (:platform options) "common")))
 
 (defn -main
