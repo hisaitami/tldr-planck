@@ -55,7 +55,7 @@
       (str/replace #"(?m):\n$" ":")
       (str/replace #"(?m)^(- .+)" (ansi-str :green "$1" :reset))
       (str/replace #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
-      (str/replace #"{{(.+?)}}" (ansi-str :reset :blue "$1" :red))))
+      (str/replace #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red))))
 
 (defn create [cache platform page]
   (when-let [data (download platform page)]
