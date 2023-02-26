@@ -7,7 +7,7 @@
             [planck.io :as io]
             [planck.environ :refer [env]]
             [planck.shell :as shell :refer [sh]]
-            [clojure.string :as str]
+            [clojure.string :as s]
             [clojure.tools.cli :refer [parse-opts]]))
 
 (def ^:dynamic *verbose* false)
@@ -27,14 +27,14 @@
     (cond
       (nil? lang) prefix
       (= "en" (subs lang 0 2)) prefix
-      (contains? #{"pt_BR" "pt_PT" "zh_TW"} lang) (str/join "." [prefix lang])
-      :else (str/join "." [prefix (subs lang 0 2)]))))
+      (contains? #{"pt_BR" "pt_PT" "zh_TW"} lang) (s/join "." [prefix lang])
+      :else (s/join "." [prefix (subs lang 0 2)]))))
 
 (defn cache-dir []
   (io/file (:home env) tldr-home "tldr" (pages-dir)))
 
 (defn download [platform page]
-  (let [url (str/join "/" [base-url (pages-dir) platform page])
+  (let [url (s/join "/" [base-url (pages-dir) platform page])
         ret (slurp url)]
     (if (= ret "404: Not Found") nil ret)))
 
@@ -50,12 +50,12 @@
 
 (defn format [content]
   (-> content
-      (str/replace #"^#\s+(.+)" (ansi-str \newline :bright-white "$1" :reset))
-      (str/replace #"(?m)^> (.+)" (ansi-str :white "$1" :reset))
-      (str/replace #"(?m):\n$" ":")
-      (str/replace #"(?m)^(- .+)" (ansi-str :green "$1" :reset))
-      (str/replace #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
-      (str/replace #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red))))
+      (s/replace #"^#\s+(.+)" (ansi-str \newline :bright-white "$1" :reset))
+      (s/replace #"(?m)^> (.+)" (ansi-str :white "$1" :reset))
+      (s/replace #"(?m):\n$" ":")
+      (s/replace #"(?m)^(- .+)" (ansi-str :green "$1" :reset))
+      (s/replace #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
+      (s/replace #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red))))
 
 (defn create [cache platform page]
   (when-let [data (download platform page)]
@@ -88,7 +88,7 @@
 (defn mkdtemp [template]
   (let [{:keys [out err]} (sh "mktemp" "-d" template)]
     (or (empty? err) (die "Error: Creating Directory:" template))
-    (str/trim out)))
+    (s/trim out)))
 
 (defn download-zip [url path]
   (let [{:keys [err]} (sh "curl" "-sL" url "-o" path)]
@@ -121,7 +121,7 @@
     (or (io/exists? path) (update-localdb))
     (println (ansi-str :bold "Pages for " platform :reset))
     (doseq [file (io/list-files path)]
-      (let [entry (str/replace (io/file-name file) #".md$" "")]
+      (let [entry (s/replace (io/file-name file) #".md$" "")]
         (println entry)))))
 
 (def cli-options [["-v" nil "print verbose output"
@@ -150,7 +150,7 @@
   (->> ["usage: ./tldr.cljs [-v] [OPTION]... SEARCH\n"
         "available commands:"
         options-summary]
-       (str/join \newline)))
+       (s/join \newline)))
 
 (defn- has-key? [m k]
   (contains? k m))
@@ -171,7 +171,7 @@
 
     (when errors
       (die "The following errors occurred while parsing your command:\n\n"
-           (str/join \newline errors)))
+           (s/join \newline errors)))
 
     (set! *verbose* (:verbose options))
 
