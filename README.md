@@ -17,7 +17,7 @@ brew install planck
 ## Usage
 
 ```
-usage: ./tldr.cljs [-v] [OPTION]... SEARCH
+usage: tldr.cljs [-v] [OPTION]... SEARCH
 
 available commands:
   -v                       false   print verbose output
