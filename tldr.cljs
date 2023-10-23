@@ -49,13 +49,15 @@
     (apply str (replace colors coll))))
 
 (defn format [content]
-  (-> content
-      (s/replace #"^#\s+(.+)" (ansi-str \newline :bright-white "$1" :reset))
-      (s/replace #"(?m)^> (.+)" (ansi-str :white "$1" :reset))
-      (s/replace #"(?m):\n$" ":")
-      (s/replace #"(?m)^(- .+)" (ansi-str :green "$1" :reset))
-      (s/replace #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
-      (s/replace #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red))))
+  (let [tty? (io/tty? *out*)
+        parse (fn [s m r] (s/replace s m (if tty? r "$1")))]
+    (-> content
+        (parse #"^#\s+(.+)" (ansi-str \newline :bright-white "$1" :reset))
+        (parse #"(?m)^> (.+)" (ansi-str :white "$1" :reset))
+        (parse #"(?m):\n$" ":")
+        (parse #"(?m)^(- .+)" (ansi-str :green "$1" :reset))
+        (parse #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
+        (parse #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red)))))
 
 (defn create [cache platform page]
   (when-let [data (download platform page)]
