@@ -1,0 +1,4 @@
+# TODO
+
+Add an option to disable color highlighting for non tty screens.
+see https://github.com/tldr-pages/tldr-c-client/pull/107
