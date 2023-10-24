@@ -51,7 +51,7 @@
     (apply str (replace colors coll))))
 
 (defn format [content]
-  (let [enable-color (or *force-color* (io/tty? *out*))
+  (let [enable-color (or *force-color* (and (empty? (:no-color env)) (io/tty? *out*)))
         parse (fn [s m r] (s/replace s m (if enable-color r "$1")))]
     (-> content
         (parse #"^#\s+(.+)" (ansi-str \newline :bright-white "$1" :reset))
