@@ -52,14 +52,14 @@
 
 (defn format [content]
   (let [enable-color (or *force-color* (and (empty? (:no-color env)) (io/tty? *out*)))
-        parse (fn [s m r] (s/replace s m (if enable-color r "$1")))]
+        colorize (fn [s m r] (s/replace s m (if enable-color r "$1")))]
     (-> content
-        (parse #"^#\s+(.+)" (ansi-str \newline :bright-white "$1" :reset))
-        (parse #"(?m)^> (.+)" (ansi-str :white "$1" :reset))
-        (parse #"(?m):\n$" ":")
-        (parse #"(?m)^(- .+)" (ansi-str :green "$1" :reset))
-        (parse #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
-        (parse #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red)))))
+        (colorize #"^#\s+(.+)" (ansi-str \newline :bright-white "$1" :reset))
+        (colorize #"(?m)^> (.+)" (ansi-str :white "$1" :reset))
+        (s/replace #"(?m):\n$" ":")
+        (colorize #"(?m)^(- .+)" (ansi-str :green "$1" :reset))
+        (colorize #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
+        (colorize #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red)))))
 
 (defn create [cache platform page]
   (when-let [data (download platform page)]
