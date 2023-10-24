@@ -3,7 +3,7 @@
 Disable color display when the output is not a tty.
 
 - [x] Disable color highlighting when the output is not a tty by default
-- [ ] Add option --color to force color output to get the old behavior
+- [x] Add option --color to force color output to get the old behavior
 - [ ] Support NO_COLOR, if it's set to any non-empty string, all colors are disabled
 
 See issues on tldr-c-client

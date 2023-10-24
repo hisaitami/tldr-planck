@@ -12,6 +12,8 @@
 
 (def ^:dynamic *verbose* false)
 
+(def ^:dynamic *force-color* false)
+
 (def base-url "https://raw.github.com/tldr-pages/tldr/main")
 
 (def tldr-home ".tldrc")
@@ -49,8 +51,8 @@
     (apply str (replace colors coll))))
 
 (defn format [content]
-  (let [tty? (io/tty? *out*)
-        parse (fn [s m r] (s/replace s m (if tty? r "$1")))]
+  (let [enable-color (or *force-color* (io/tty? *out*))
+        parse (fn [s m r] (s/replace s m (if enable-color r "$1")))]
     (-> content
         (parse #"^#\s+(.+)" (ansi-str \newline :bright-white "$1" :reset))
         (parse #"(?m)^> (.+)" (ansi-str :white "$1" :reset))
@@ -144,6 +146,8 @@
                   [nil, "--windows" "show command page for Windows"]
                   ["-r" "--render PATH" "render a local page for testing purposes"
                    :validate [#(io/exists? %) "file does not exist"]]
+                  ["-C", "--color" "force color display"
+                   :default false]
                   [nil, "--random" "show a random command"]])
 
 (def version "tldr.cljs v0.6.3")
@@ -176,6 +180,7 @@
            (s/join \newline errors)))
 
     (set! *verbose* (:verbose options))
+    (set! *force-color* (:color options))
 
     (condp has-key? options
       :version ;; show version info
