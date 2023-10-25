@@ -1,6 +1,6 @@
 # TODO
 
-- [ ] Change default platform behavior
+- [x] Change default platform behavior
 - [ ] Support for displaying subcommand pages
 - [ ] Update local cache automatically
 

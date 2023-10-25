@@ -76,9 +76,10 @@
    (-> page fetch format println))
   ([platform page]
    (let [cache (io/file (cache-dir) platform page)]
-     (when-not (io/exists? cache)
-       (create cache platform page))
-     (-> cache display))))
+     (if (and (not (io/exists? cache))
+              (not= platform "common"))
+       (display (io/file (cache-dir) "common" page))
+       (display cache)))))
 
 (defn rand-page [platform]
   (let [path (io/file (cache-dir) platform)]
@@ -128,6 +129,17 @@
       (let [entry (s/replace (io/file-name file) #".md$" "")]
         (println entry)))))
 
+(defn- default-platform []
+  (let [{:keys [out err]} (sh "uname" "-s")]
+    (or (empty? err) (die "Error: Unknown platform"))
+    (let [sysname (s/trim out)]
+      (case sysname
+        "Linux" "linux"
+        "Darwin" "osx"
+        "SunOS" "sunos"
+        "Windows" "windows"
+        "common"))))
+
 (def cli-options [["-v" nil "print verbose output"
                    :id :verbose :default false]
                   [nil "--version" "print version and exit"]
@@ -137,7 +149,7 @@
                   ["-l" "--list" "list all entries in the local database"]
                   ["-p" "--platform PLATFORM"
                    "select platform, supported are linux / osx / sunos / windows"
-                   :default "common"
+                   :default (default-platform)
                    :validate [#(contains? #{"common" "linux" "osx" "sunos" "windows"} %)
                               "supported are common / linux / osx / sunos / windows"]]
                   [nil, "--linux" "show command page for Linux"]
