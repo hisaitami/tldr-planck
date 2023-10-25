@@ -1,12 +1,6 @@
 # TODO
 
-Disable color display when the output is not a tty.
+- [ ] Change default platform behavior
+- [ ] Support for displaying subcommand pages
+- [ ] Update local cache automatically
 
-- [x] Disable color highlighting when the output is not a tty by default
-- [x] Add option --color to force color output to get the old behavior
-- [x] Support NO_COLOR, if it's set to any non-empty string, all colors are disabled
-
-See issues on tldr-c-client
-
- - https://github.com/tldr-pages/tldr-c-client/pull/106
- - https://github.com/tldr-pages/tldr-c-client/pull/107
