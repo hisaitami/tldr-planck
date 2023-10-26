@@ -221,6 +221,8 @@
       (let [page (rand-page platform)]
         (display page))
 
+      ;; if no argument is given, show usage and exit as failure,
+      ;; otherwise display the specified page
       (if (empty? arguments) (die (usage summary))
         (let [page (io/file-name (str (s/join "-" arguments) suffix))]
           (display platform page))))))
