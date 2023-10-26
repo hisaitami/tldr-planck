@@ -18,6 +18,8 @@
 
 (def tldr-home ".tldrc")
 
+(def suffix ".md")
+
 (def zip-file "main.zip")
 
 (def zip-url (str "https://github.com/tldr-pages/tldr/archive/" zip-file))
@@ -126,7 +128,8 @@
     (or (io/exists? path) (update-localdb))
     (println (ansi-str :bold "Pages for " platform :reset))
     (doseq [file (io/list-files path)]
-      (let [entry (s/replace (io/file-name file) #".md$" "")]
+      (let [r (re-pattern (str suffix "$"))
+            entry (s/replace (io/file-name file) r "")]
         (println entry)))))
 
 (defn- default-platform []
@@ -219,7 +222,7 @@
         (display page))
 
       (if (empty? arguments) (die (usage summary))
-        (let [page (-> (s/join "-" arguments) (str ".md") (io/file-name))]
+        (let [page (-> (s/join "-" arguments) (str suffix) (io/file-name))]
           (display platform page))))))
 
 (set! *main-cli-fn* -main)
