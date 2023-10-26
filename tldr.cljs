@@ -218,11 +218,8 @@
       (let [page (rand-page platform)]
         (display page))
 
-      ;; if there is only one argument, display it,
-      ;; otherwise show usage and exit as failure
-      (if (= 1 (count arguments))
-        (let [page (-> (first arguments) (str ".md") (io/file-name))]
-          (display platform page))
-        (die (usage summary))))))
+      (if (zero? (count arguments)) (die (usage summary))
+        (let [page (-> (s/join "-" arguments) (str ".md") (io/file-name))]
+          (display platform page))))))
 
 (set! *main-cli-fn* -main)
