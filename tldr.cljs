@@ -222,7 +222,7 @@
         (display page))
 
       (if (empty? arguments) (die (usage summary))
-        (let [page (-> (s/join "-" arguments) (str suffix) (io/file-name))]
+        (let [page (io/file-name (str (s/join "-" arguments) suffix))]
           (display platform page))))))
 
 (set! *main-cli-fn* -main)
