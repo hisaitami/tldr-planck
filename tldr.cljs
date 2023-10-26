@@ -218,7 +218,7 @@
       (let [page (rand-page platform)]
         (display page))
 
-      (if (zero? (count arguments)) (die (usage summary))
+      (if (empty? arguments) (die (usage summary))
         (let [page (-> (s/join "-" arguments) (str ".md") (io/file-name))]
           (display platform page))))))
 
