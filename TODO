@@ -2,5 +2,5 @@
 
 - [x] Change default platform behavior
 - [x] Support for displaying subcommand pages
-- [ ] Update local cache automatically
+- [x] Update local cache automatically
 

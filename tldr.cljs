@@ -8,6 +8,7 @@
             [planck.environ :refer [env]]
             [planck.shell :as shell :refer [sh]]
             [clojure.string :as s]
+            [clojure.math :as math]
             [clojure.tools.cli :refer [parse-opts]]))
 
 (def ^:dynamic *verbose* false)
@@ -132,6 +133,16 @@
             entry (s/replace (io/file-name file) r "")]
         (println entry)))))
 
+(defn automatic-update-localdb []
+  (let [prev (int (slurp (io/file (:home env) tldr-home "date")))
+        now (math/ceil (/ (.now js/Date) 1000))]
+    (when (and (> (- now prev) (* 60 60 24 7 2))
+               (empty? (:prevent-update-env-variable env)))
+      (println "Local database is older than two weeks, attempting to update it..."
+               "\nTo prevent automatic updates, set the environment variable"
+               "PREVENT_UPDATE_ENV_VARIABLE")
+      (update-localdb))))
+
 (defn- default-platform []
   (let [{:keys [out err]} (sh "uname" "-s")]
     (or (empty? err) (die "Error: Unknown platform"))
@@ -196,6 +207,8 @@
 
     (set! *verbose* (:verbose options))
     (set! *force-color* (:color options))
+
+    (automatic-update-localdb)
 
     (condp has-key? options
       :version ;; show version info
