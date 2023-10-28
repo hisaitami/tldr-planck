@@ -136,8 +136,7 @@
 (defn automatic-update-localdb []
   (let [prev (int (slurp (io/file (:home env) tldr-home "date")))
         now (math/ceil (/ (.now js/Date) 1000))]
-    (when (and (> (- now prev) (* 60 60 24 7 2))
-               (empty? (:prevent-update-env-variable env)))
+    (when (> (- now prev) (* 60 60 24 7 2))
       (println "Local database is older than two weeks, attempting to update it..."
                "\nTo prevent automatic updates, set the environment variable"
                "PREVENT_UPDATE_ENV_VARIABLE")
@@ -208,7 +207,8 @@
     (set! *verbose* (:verbose options))
     (set! *force-color* (:color options))
 
-    (automatic-update-localdb)
+    (or (empty? (:prevent-update-env-variable env))
+        (automatic-update-localdb))
 
     (condp has-key? options
       :version ;; show version info
