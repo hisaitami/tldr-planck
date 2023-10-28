@@ -134,9 +134,9 @@
         (println entry)))))
 
 (defn automatic-update-localdb []
-  (let [prev (int (slurp (io/file (:home env) tldr-home "date")))
+  (let [created (int (slurp (io/file (:home env) tldr-home "date")))
         now (math/ceil (/ (.now js/Date) 1000))]
-    (when (> (- now prev) (* 60 60 24 7 2))
+    (when (> (- now created) (* 60 60 24 7 2))
       (println "Local database is older than two weeks, attempting to update it..."
                "\nTo prevent automatic updates, set the environment variable"
                "PREVENT_UPDATE_ENV_VARIABLE")
