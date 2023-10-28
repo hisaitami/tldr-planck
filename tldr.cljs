@@ -3,7 +3,7 @@
 
 (ns tldr.core
   "A planck based command-line client for tldr"
-  (:require [planck.core :refer [slurp spit exit]]
+  (:require [planck.core :refer [slurp exit]]
             [planck.io :as io]
             [planck.environ :refer [env]]
             [planck.shell :as shell :refer [sh]]
@@ -38,11 +38,6 @@
 (defn cache-dir []
   (io/file (:home env) tldr-home "tldr" (pages-dir)))
 
-(defn download [platform page]
-  (let [url (s/join "/" [base-url (pages-dir) platform page])
-        ret (slurp url)]
-    (if (= ret "404: Not Found") nil ret)))
-
 (defn ansi-str [& coll]
   (let [colors {:reset "\u001b[0m"
                 :bold  "\u001b[1m"
@@ -63,11 +58,6 @@
         (colorize #"(?m)^(- .+)" (ansi-str :green "$1" :reset))
         (colorize #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
         (colorize #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red)))))
-
-(defn create [cache platform page]
-  (when-let [data (download platform page)]
-    (io/make-parents cache)
-    (spit cache data)))
 
 (defn fetch [cache]
   (if (io/exists? cache)
