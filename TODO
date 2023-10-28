@@ -1,15 +1,4 @@
 # TODO
 
-- [x] Change default platform behavior
-- [x] Support for displaying subcommand pages
-- [x] Update local cache automatically
-    - [x] Fix handling PREVENT_UPDATE_ENV_VARIABLE
-    - [x] Test updating should be occured after 2 weeks
-    - [x] Test updating should be skipped when tldr-home directory doesn't exist
-    - [x] Test updating should be skipped when date file doesn't exist
-    - [x] ~~Test updating should be skipped when date file has invalid value~~
-
-## FIXME
-
 - [ ] Check if color output is enabled in the function list-localdb
 
