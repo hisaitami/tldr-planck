@@ -35,8 +35,7 @@
       (contains? #{"pt_BR" "pt_PT" "zh_TW"} lang) (s/join "." [prefix lang])
       :else (s/join "." [prefix (subs lang 0 2)]))))
 
-(defn cache-dir []
-  (io/file (:home env) tldr-home "tldr" (pages-dir)))
+(def cache-dir (io/file (:home env) tldr-home "tldr" (pages-dir)))
 
 (defn ansi-str [& coll]
   (let [colors {:reset "\u001b[0m"
@@ -68,14 +67,14 @@
   ([page]
    (-> page fetch format println))
   ([platform page]
-   (let [cache (io/file (cache-dir) platform page)]
+   (let [cache (io/file cache-dir platform page)]
      (if (and (not (io/exists? cache))
               (not= platform "common"))
-       (display (io/file (cache-dir) "common" page))
+       (display (io/file cache-dir "common" page))
        (display cache)))))
 
 (defn rand-page [platform]
-  (let [path (io/file (cache-dir) platform)]
+  (let [path (io/file cache-dir platform)]
     (rand-nth (io/list-files path))))
 
 (defn die [& args]
@@ -115,7 +114,7 @@
                  "local database")))))
 
 (defn list-localdb [platform]
-  (let [path (io/file (cache-dir) platform)]
+  (let [path (io/file cache-dir platform)]
     (or (io/exists? path) (update-localdb))
     (println (ansi-str :bold "Pages for " platform :reset))
     (doseq [file (io/list-files path)]
