@@ -3,7 +3,7 @@
 
 (ns tldr.core
   "A planck based command-line client for tldr"
-  (:require [planck.core :refer [slurp exit]]
+  (:require [planck.core :refer [slurp spit exit]]
             [planck.io :as io]
             [planck.environ :refer [env]]
             [planck.shell :as shell :refer [sh]]
@@ -126,16 +126,19 @@
 
 (defn automatic-update-localdb []
   (when *verbose* (println "Checking local database..."))
-  (when (io/exists? cache-date-file)
-    (let [created (int (slurp cache-date-file))
-          now (math/ceil (/ (.now js/Date) 1000))
-          elapsed (- now created)]
-      (when *verbose* (println "*" created now elapsed))
-      (when (> elapsed (* 60 60 24 7 2))
-        (println "Local database is older than two weeks, attempting to update it..."
-                 "\nTo prevent automatic updates, set the environment variable"
-                 "PREVENT_UPDATE_ENV_VARIABLE")
-        (update-localdb)))))
+  (when (not (io/exists? cache-date-file))
+    (io/make-parents cache-date-file)
+    (spit cache-date-file 0))
+  (let [created (int (slurp cache-date-file))
+        current (math/ceil (/ (.now js/Date) 1000))
+        elapsed (- current created)]
+    (when *verbose* (println "*" created current elapsed))
+    (when (> elapsed (* 60 60 24 7 2))
+      (println "Local database is older than two weeks, attempting to update it..."
+               "\nTo prevent automatic updates, set the environment variable"
+               "PREVENT_UPDATE_ENV_VARIABLE")
+      (update-localdb)
+      (spit cache-date-file current))))
 
 (defn- default-platform []
   (let [{:keys [out err]} (sh "uname" "-s")]
