@@ -37,6 +37,8 @@
 
 (def cache-dir (io/file (:home env) tldr-home "tldr" (pages-dir)))
 
+(def cache-date-file (io/file (:home env) tldr-home "date"))
+
 (defn ansi-str [& coll]
   (let [colors {:reset "\u001b[0m"
                 :bold  "\u001b[1m"
@@ -123,13 +125,17 @@
         (println entry)))))
 
 (defn automatic-update-localdb []
-  (let [created (int (slurp (io/file (:home env) tldr-home "date")))
-        now (math/ceil (/ (.now js/Date) 1000))]
-    (when (> (- now created) (* 60 60 24 7 2))
-      (println "Local database is older than two weeks, attempting to update it..."
-               "\nTo prevent automatic updates, set the environment variable"
-               "PREVENT_UPDATE_ENV_VARIABLE")
-      (update-localdb))))
+  (when *verbose* (println "Checking local database..."))
+  (when (io/exists? cache-date-file)
+    (let [created (int (slurp cache-date-file))
+          now (math/ceil (/ (.now js/Date) 1000))
+          elapsed (- now created)]
+      (when *verbose* (println "*" created now elapsed))
+      (when (> elapsed (* 60 60 24 7 2))
+        (println "Local database is older than two weeks, attempting to update it..."
+                 "\nTo prevent automatic updates, set the environment variable"
+                 "PREVENT_UPDATE_ENV_VARIABLE")
+        (update-localdb)))))
 
 (defn- default-platform []
   (let [{:keys [out err]} (sh "uname" "-s")]
@@ -196,7 +202,7 @@
     (set! *verbose* (:verbose options))
     (set! *force-color* (:color options))
 
-    (or (empty? (:prevent-update-env-variable env))
+    (or (not (empty? (:prevent-update-env-variable env)))
         (automatic-update-localdb))
 
     (condp has-key? options
