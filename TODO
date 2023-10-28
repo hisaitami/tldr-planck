@@ -3,4 +3,8 @@
 - [x] Change default platform behavior
 - [x] Support for displaying subcommand pages
 - [x] Update local cache automatically
+    - [ ] Test updating should be occured after 2 weeks
+    - [ ] Test updating should be skipped when tldr-home directory doesn't exist
+    - [ ] Test updating should be skipped when date file doesn't exist
+    - [ ] Test updating should be skipped when date file has invalid value
 
