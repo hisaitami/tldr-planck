@@ -202,7 +202,7 @@
     (set! *verbose* (:verbose options))
     (set! *force-color* (:color options))
 
-    (or (not (empty? (:prevent-update-env-variable env)))
+    (or (seq (:prevent-update-env-variable env))
         (automatic-update-localdb))
 
     (condp has-key? options
