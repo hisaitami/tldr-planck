@@ -25,7 +25,7 @@
 
 (def zip-url (str "https://github.com/tldr-pages/tldr/archive/" zip-file))
 
-(defn pages-dir []
+(def pages-dir
   (let [prefix "pages"
         lang (->> (str (:lang env)) (re-matches #"^([a-z]{2}(_[A-Z]{2})*).*$") second)
         cc (subs (str lang) 0 2)]
@@ -37,7 +37,7 @@
 
 (defn cache-path
   ([]
-   (io/file (:home env) tldr-home "tldr" (pages-dir)))
+   (io/file (:home env) tldr-home "tldr" pages-dir))
   ([platform]
    (io/file (cache-path) platform))
   ([platform page]
