@@ -32,8 +32,8 @@
     (cond
       (empty? lang) prefix
       (= "en" cc) prefix
-      (#{"pt_BR" "pt_PT" "zh_TW"} lang) (s/join "." [prefix lang])
-      :else (s/join "." [prefix cc]))))
+      (#{"pt_BR" "pt_PT" "zh_TW"} lang) (str prefix "." lang)
+      :else (str prefix "." cc))))
 
 (defn cache-path
   ([]
