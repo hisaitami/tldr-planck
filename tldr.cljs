@@ -54,15 +54,15 @@
     (apply str (replace colors coll))))
 
 (defn format [content]
-  (let [enable-color (or *force-color* (and (empty? (:no-color env)) (io/tty? *out*)))
-        colorize (fn [s m r] (s/replace s m (if enable-color r "$1")))]
+  (let [color? (or *force-color* (and (empty? (:no-color env)) (io/tty? *out*)))
+        parse (fn [s m r] (s/replace s m (if color? r "$1")))]
     (-> content
-        (colorize #"^#\s+(.+)" (ansi-str \newline :bright-white "$1" :reset))
-        (colorize #"(?m)^> (.+)" (ansi-str :white "$1" :reset))
+        (parse #"^#\s+(.+)" (ansi-str :bright-white "$1" :reset))
+        (parse #"(?m)^> (.+)" (ansi-str :white "$1" :reset))
         (s/replace #"(?m):\n$" ":")
-        (colorize #"(?m)^(- .+)" (ansi-str :green "$1" :reset))
-        (colorize #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
-        (colorize #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red)))))
+        (parse #"(?m)^(- .+)" (ansi-str :green "$1" :reset))
+        (parse #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
+        (parse #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red)))))
 
 (defn fetch [cache]
   (if (io/exists? cache) (slurp cache)
@@ -70,7 +70,8 @@
 
 (defn display
   ([page]
-   (-> (fetch page) format println))
+   (println)
+   (println (format (fetch page))))
   ([platform page]
    (let [cache (cache-path platform page)]
      (if (io/exists? cache) (display cache)
@@ -119,7 +120,7 @@
 (defn list-localdb [platform]
   (let [path (cache-path platform)]
     (or (io/exists? path) (update-localdb))
-    (println (ansi-str :bold "Pages for " platform :reset))
+    (println (format "# Pages for"))
     (doseq [file (io/list-files path)]
       (let [r (re-pattern (str page-suffix "$"))
             entry (s/replace (io/file-name file) r "")]
