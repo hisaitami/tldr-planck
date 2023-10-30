@@ -72,13 +72,11 @@
 
 (defn display
   ([page]
-   (-> page fetch format println))
+   (-> (fetch page) format println))
   ([platform page]
    (let [cache (cache-path platform page)]
-     (if (and (not (io/exists? cache))
-              (not= platform "common"))
-       (display (cache-path "common" page))
-       (display cache)))))
+     (if (io/exists? cache) (display cache)
+       (display (cache-path "common" page))))))
 
 (defn rand-page [platform]
   (let [path (cache-path platform)]
