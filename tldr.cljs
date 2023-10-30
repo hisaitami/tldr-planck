@@ -35,6 +35,8 @@
       (#{"pt_BR" "pt_PT" "zh_TW"} lang) (s/join "." [prefix lang])
       :else (s/join "." [prefix cc]))))
 
+(def cache-date (io/file (:home env) tldr-home "date"))
+
 (defn cache-path
   ([]
    (io/file (:home env) tldr-home "tldr" pages-dir))
@@ -42,8 +44,6 @@
    (io/file (cache-path) platform))
   ([platform page]
    (io/file (cache-path) platform page)))
-
-(def cache-date-file (io/file (:home env) tldr-home "date"))
 
 (defn ansi-str [& coll]
   (let [colors {:reset "\u001b[0m"
@@ -129,10 +129,10 @@
 
 (defn automatic-update-localdb []
   (when *verbose* (println "Checking local database..."))
-  (when (not (io/exists? cache-date-file))
-    (io/make-parents cache-date-file)
-    (spit cache-date-file 0))
-  (let [created (int (slurp cache-date-file))
+  (when (not (io/exists? cache-date))
+    (io/make-parents cache-date)
+    (spit cache-date 0))
+  (let [created (int (slurp cache-date))
         current (math/ceil (/ (.now js/Date) 1000))
         elapsed (- current created)]
     (when *verbose* (println "*" created current elapsed))
@@ -141,7 +141,7 @@
                "\nTo prevent automatic updates, set the environment variable"
                "PREVENT_UPDATE_ENV_VARIABLE")
       (update-localdb)
-      (spit cache-date-file current))))
+      (spit cache-date current))))
 
 (defn- default-platform []
   (let [{:keys [out err]} (sh "uname" "-s")]
