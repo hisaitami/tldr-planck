@@ -15,8 +15,6 @@
 
 (def ^:dynamic *force-color* false)
 
-(def base-url "https://raw.github.com/tldr-pages/tldr/main")
-
 (def tldr-home ".tldrc")
 
 (def suffix ".md")
