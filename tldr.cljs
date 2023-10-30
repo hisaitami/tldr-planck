@@ -66,8 +66,7 @@
         (colorize #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red)))))
 
 (defn fetch [cache]
-  (if (io/exists? cache)
-    (slurp cache)
+  (if (io/exists? cache) (slurp cache)
     "This page doesn't exist yet!"))
 
 (defn display
