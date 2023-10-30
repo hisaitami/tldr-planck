@@ -27,8 +27,7 @@
 
 (defn pages-dir []
   (let [prefix "pages"
-        lang (->> (:lang env) str
-                  (re-matches #"^([a-z]{2}(_[A-Z]{2})*).*$") second)]
+        lang (->> (:lang env) str (re-matches #"^([a-z]{2}(_[A-Z]{2})*).*$") second)]
     (cond
       (nil? lang) prefix
       (= "en" (subs lang 0 2)) prefix
