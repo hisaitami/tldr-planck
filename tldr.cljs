@@ -17,11 +17,11 @@
 
 (def tldr-home ".tldrc")
 
-(def suffix ".md")
-
 (def zip-file "main.zip")
 
 (def zip-url (str "https://github.com/tldr-pages/tldr/archive/" zip-file))
+
+(def page-suffix ".md")
 
 (def pages-dir
   (let [prefix "pages"
@@ -121,7 +121,7 @@
     (or (io/exists? path) (update-localdb))
     (println (ansi-str :bold "Pages for " platform :reset))
     (doseq [file (io/list-files path)]
-      (let [r (re-pattern (str suffix "$"))
+      (let [r (re-pattern (str page-suffix "$"))
             entry (s/replace (io/file-name file) r "")]
         (println entry)))))
 
@@ -236,7 +236,7 @@
       ;; if no argument is given, show usage and exit as failure,
       ;; otherwise display the specified page
       (if (empty? arguments) (die (usage summary))
-        (let [page (io/file-name (str (s/join "-" arguments) suffix))]
+        (let [page (io/file-name (str (s/join "-" arguments) page-suffix))]
           (display platform page))))))
 
 (set! *main-cli-fn* -main)
