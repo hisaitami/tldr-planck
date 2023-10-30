@@ -27,12 +27,13 @@
 
 (defn pages-dir []
   (let [prefix "pages"
-        lang (->> (:lang env) str (re-matches #"^([a-z]{2}(_[A-Z]{2})*).*$") second)]
+        lang (->> (str (:lang env)) (re-matches #"^([a-z]{2}(_[A-Z]{2})*).*$") second)
+        cc (subs (str lang) 0 2)]
     (cond
-      (nil? lang) prefix
-      (= "en" (subs lang 0 2)) prefix
-      (contains? #{"pt_BR" "pt_PT" "zh_TW"} lang) (s/join "." [prefix lang])
-      :else (s/join "." [prefix (subs lang 0 2)]))))
+      (empty? lang) prefix
+      (= "en" cc) prefix
+      (#{"pt_BR" "pt_PT" "zh_TW"} lang) (s/join "." [prefix lang])
+      :else (s/join "." [prefix cc]))))
 
 (defn cache-path
   ([]
