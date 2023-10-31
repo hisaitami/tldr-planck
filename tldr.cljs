@@ -33,6 +33,9 @@
       (#{"pt_BR" "pt_PT" "zh_TW"} lang) (s/join "." [prefix lang])
       :else (s/join "." [prefix cc]))))
 
+(defn current-datetime []
+  (math/ceil (/ (.now js/Date) 1000)))
+
 (def cache-date (io/file (:home env) tldr-home "date"))
 
 (defn cache-path
@@ -107,6 +110,7 @@
         (sh "rm" "-rf" old)
         (sh "mv" new old)))
     (when (io/directory? tmp-dir) (sh "rm" "-rf" tmp-dir))
+    (spit cache-date (current-datetime))
     (println "Successfully updated local database")))
 
 (defn clear-localdb []
@@ -126,21 +130,18 @@
             entry (s/replace (io/file-name file) r "")]
         (println entry)))))
 
-(defn automatic-update-localdb []
+(defn check-localdb []
   (when *verbose* (println "Checking local database..."))
-  (when (not (io/exists? cache-date))
-    (io/make-parents cache-date)
-    (spit cache-date 0))
-  (let [created (int (slurp cache-date))
-        current (math/ceil (/ (.now js/Date) 1000))
-        elapsed (- current created)]
-    (when *verbose* (println "*" created current elapsed))
-    (when (> elapsed (* 60 60 24 7 2))
-      (println "Local database is older than two weeks, attempting to update it..."
-               "\nTo prevent automatic updates, set the environment variable"
-               "PREVENT_UPDATE_ENV_VARIABLE")
-      (update-localdb)
-      (spit cache-date current))))
+  (if (not (io/exists? cache-date)) (update-localdb)
+    (let [created (long (slurp cache-date))
+          current (current-datetime)
+          elapsed (- current created)]
+      (when *verbose* (println "*" created current elapsed))
+      (when (> elapsed (* 60 60 24 7 2))
+        (println "Local database is older than two weeks, attempting to update it..."
+                 "\nTo prevent automatic updates, set the environment variable"
+                 "PREVENT_UPDATE_ENV_VARIABLE")
+        (update-localdb)))))
 
 (defn- default-platform []
   (let [{:keys [out err]} (sh "uname" "-s")]
@@ -207,9 +208,6 @@
     (set! *verbose* (:verbose options))
     (set! *force-color* (:color options))
 
-    (or (seq (:prevent-update-env-variable env))
-        (automatic-update-localdb))
-
     (condp has-key? options
       :version ;; show version info
       (println version)
@@ -238,6 +236,7 @@
       ;; otherwise display the specified page
       (if (empty? arguments) (die (usage summary))
         (let [page (io/file-name (str (s/join "-" arguments) page-suffix))]
+          (when (empty? (:prevent-update-env-variable env)) (check-localdb))
           (display platform page))))))
 
 (set! *main-cli-fn* -main)
