@@ -235,8 +235,9 @@
       ;; if no argument is given, show usage and exit as failure,
       ;; otherwise display the specified page
       (if (empty? arguments) (die (usage summary))
-        (let [page (io/file-name (str (s/join "-" arguments) page-suffix))]
-          (when (empty? (:prevent-update-env-variable env)) (check-localdb))
+        (let [update? (empty? (:prevent-update-env-variable env))
+              page (-> (s/join "-" arguments) (str page-suffix) (io/file-name))]
+          (when update? (check-localdb))
           (display platform page))))))
 
 (set! *main-cli-fn* -main)
