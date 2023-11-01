@@ -155,7 +155,8 @@
         "common"))))
 
 (def cli-options [["-v" nil "print verbose output"
-                   :id :verbose :default false]
+                   :id :verbose
+                   :default false]
                   [nil "--version" "print version and exit"]
                   ["-h" "--help" "print this help and exit"]
                   ["-u" "--update" "update local database"]
