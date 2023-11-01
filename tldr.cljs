@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-"exec" "plk" "-Sdeps" "{:deps {org.clojure/tools.cli {:mvn/version \"1.0.214\"}}}" "-sf" "$0" "$@"
+"exec" "plk" "-Sdeps" "{:deps {org.clojure/tools.cli {:mvn/version \"1.0.219\"}}}" "-sf" "$0" "$@"
 
 (ns tldr.core
   "A planck based command-line client for tldr"
