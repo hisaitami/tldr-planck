@@ -164,7 +164,7 @@
                   ["-l" "--list" "list all entries in the local database"]
                   ["-p" "--platform PLATFORM"
                    "select platform, supported are common / linux / osx / sunos / windows"
-                   :default (default-platform)
+                   :default-fn default-platform
                    :validate [#(contains? #{"common" "linux" "osx" "sunos" "windows"} %)
                               "supported are common / linux / osx / sunos / windows"]]
                   [nil, "--linux" "show command page for Linux"]
