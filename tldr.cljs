@@ -156,7 +156,8 @@
 
 (def cli-options [["-v" nil "print verbose output"
                    :id :verbose
-                   :default false]
+                   :default false
+                   :default-desc ""]
                   [nil "--version" "print version and exit"]
                   ["-h" "--help" "print this help and exit"]
                   ["-u" "--update" "update local database"]
@@ -165,6 +166,7 @@
                   ["-p" "--platform PLATFORM"
                    "select platform, supported are common / linux / osx / sunos / windows"
                    :default-fn default-platform
+                   :default-desc ""
                    :validate [#(contains? #{"common" "linux" "osx" "sunos" "windows"} %)
                               "supported are common / linux / osx / sunos / windows"]]
                   [nil, "--linux" "show command page for Linux"]
@@ -174,7 +176,8 @@
                   ["-r" "--render PATH" "render a local page for testing purposes"
                    :validate [#(io/exists? %) "file does not exist"]]
                   ["-C", "--color" "force color display"
-                   :default false]
+                   :default false
+                   :default-desc ""]
                   [nil, "--random" "show a random command"]])
 
 (def version "tldr.cljs v0.6.8")
