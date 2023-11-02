@@ -140,7 +140,7 @@
       (when (> elapsed (* 60 60 24 7 2))
         (println "Local database is older than two weeks, attempting to update it..."
                  "\nTo prevent automatic updates, set the environment variable"
-                 "PREVENT_UPDATE_ENV_VARIABLE")
+                 "TLDR_AUTO_UPDATE_DISABLED")
         (update-localdb)))))
 
 (defn- default-platform []
@@ -239,7 +239,7 @@
       ;; if no argument is given, show usage and exit as failure,
       ;; otherwise display the specified page
       (if (empty? arguments) (die (usage summary))
-        (let [update? (empty? (:prevent-update-env-variable env))
+        (let [update? (empty? (:tldr-auto-update-disabled env))
               page (-> (s/join "-" arguments) (s/lower-case) (str page-suffix) (io/file-name))]
           (when update? (check-localdb))
           (display platform page))))))

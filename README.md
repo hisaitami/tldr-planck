@@ -64,12 +64,20 @@ To control the cache:
  ```
  tldr.cljs --render /path/to/file.md
  ```
+## Settings
+
+If the local database is older than two weeks, attempting to update it.
+To prevent automatic updates, set the environment variable `TLDR_AUTO_UPDATE_DISABLED`
+
+```
+TLDR_AUTO_UPDATE_DISABLED=1 ./tldr.cljs
+```
 
 ## Referenced projects
 
 * [tldr](https://github.com/tldr-pages/tldr) - Simplified and community-driven man pages
-* [tldr-node-client](https://github.com/tldr-pages/tldr-node-client) - Node.js command-line client for tldr pages
 * [tldr-c-client](https://github.com/tldr-pages/tldr-c-client) - C command-line client for tldr pages
+* [tldr-node-client](https://github.com/tldr-pages/tldr-node-client) - Node.js command-line client for tldr pages
 * [tldr-php](https://github.com/BrainMaestro/tldr-php) - PHP Client for tldr
 
 ## License
