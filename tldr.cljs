@@ -240,7 +240,7 @@
       ;; otherwise display the specified page
       (if (empty? arguments) (die (usage summary))
         (let [update? (empty? (:prevent-update-env-variable env))
-              page (-> (s/join "-" arguments) (str page-suffix) (io/file-name))]
+              page (-> (s/join "-" arguments) (s/lower-case) (str page-suffix) (io/file-name))]
           (when update? (check-localdb))
           (display platform page))))))
 
