@@ -20,19 +20,20 @@ brew install planck
 usage: tldr.cljs [-v] [OPTION]... SEARCH
 
 available commands:
-  -v                       false   print verbose output
-      --version                    print version and exit
-  -h, --help                       print this help and exit
-  -u, --update                     update local database
-  -c, --clear-cache                clear local database
-  -l, --list                       list all entries in the local database
-  -p, --platform PLATFORM  common  select platform, supported are linux / osx / sunos / windows
-      --linux                      show command page for Linux
-      --osx                        show command page for OSX
-      --sunos                      show command page for SunOS
-      --windows                    show command page for Windows
-  -r, --render PATH                render a local page for testing purposes
-      --random                     show a random command
+  -v                         print verbose output
+      --version              print version and exit
+  -h, --help                 print this help and exit
+  -u, --update               update local database
+  -c, --clear-cache          clear local database
+  -l, --list                 list all entries in the local database
+  -p, --platform PLATFORM    select platform, supported are common / linux / osx / sunos / windows
+      --linux                show command page for Linux
+      --osx                  show command page for OSX
+      --sunos                show command page for SunOS
+      --windows              show command page for Windows
+  -r, --render PATH          render a local page for testing purposes
+  -C, --color                force color display
+      --random               show a random command
 ```
 
 Examples:
