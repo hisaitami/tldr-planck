@@ -150,11 +150,11 @@
         "Windows" "windows"
         "common"))))
 
-(def cli-options [["-v" nil "print verbose output"
+(def cli-options [[nil "--verbose" "print verbose output"
                    :id :verbose
                    :default false
                    :default-desc ""]
-                  [nil "--version" "print version and exit"]
+                  ["-v" "--version" "print version and exit"]
                   ["-h" "--help" "print this help and exit"]
                   ["-u" "--update" "update local database"]
                   ["-c" "--clear-cache" "clear local database"]
@@ -176,7 +176,7 @@
                    :default-desc ""]
                   [nil, "--random" "show a random command"]])
 
-(def version "tldr.cljs v0.6.9")
+(def version "tldr.cljs v0.6.9 (spec v2.0)")
 
 (defn usage [options-summary]
   (->> ["usage: tldr.cljs [-v] [OPTION]... SEARCH\n"
