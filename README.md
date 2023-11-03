@@ -32,8 +32,8 @@ tldr.cljs
 usage: tldr.cljs [-v] [OPTION]... SEARCH
 
 available commands:
-  -v                         print verbose output
-      --version              print version and exit
+      --verbose              print verbose output
+  -v, --version              print version and exit
   -h, --help                 print this help and exit
   -u, --update               update local database
   -c, --clear-cache          clear local database
