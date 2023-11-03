@@ -6,10 +6,16 @@ Comply with [minium specifications](https://github.com/tldr-pages/tldr/wiki/Mini
 - [x] It should have installation instructions and setup requirements.
 - [x] It should list supported features.
 - [ ] It should follow the [full client specification](https://github.com/tldr-pages/tldr/blob/main/CLIENT-SPECIFICATION.md).
-    - [ ] Support required cli options
+    - [x] Support required cli options
       - [x] -v, --version Shows the current version of the client, and the version of this specification that it implements.
       - [x] -p, --platform Specifies the platform, the selected platform MUST be checked first instead of the current platform
       - [x] -u, --update Updates the offline cache of pages. MUST be implemented if caching is supported.
       - [x] Clients MUST implement both the short and long versions of an option
-      - [x] Additional decoration MAY be printed if the standard output is a TTY. If not, then the output MUST not contain any additional decorations.
+    - [x] Additional decoration MAY be printed if the standard output is a TTY. If not, then the output MUST not contain any additional decorations.
+    - [x] Support page name rules
+      - [x] The first argument that does not start with a dash (-), MUST be considered the page name.
+      - [x] Page names MAY contain spaces (e.g. git status), and such page names MUST be transparently concatenated with dashes (-). For example, the page name git checkout becomes git-checkout.
+      - [x] Page names MAY contain mixed capitalization, and such page names MUST be transparently lowercased. For example, the page name eyeD3 becomes eyed3.
+
+
 
