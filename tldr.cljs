@@ -17,9 +17,9 @@
 
 (def tldr-home ".tldrc")
 
-(def zip-file "main.zip")
+(def zip-file "tldr.zip")
 
-(def zip-url (str "https://github.com/tldr-pages/tldr/archive/" zip-file))
+(def zip-url (str "https://tldr.sh/assets/" zip-file))
 
 (def page-suffix ".md")
 
@@ -40,7 +40,7 @@
 
 (defn cache-path
   ([]
-   (io/file (:home env) tldr-home "tldr" pages-dir))
+   (io/file (:home env) tldr-home pages-dir))
   ([platform]
    (io/file (cache-path) platform))
   ([platform page]
@@ -104,11 +104,7 @@
         zip-path (download-zip zip-url (:path (io/file tmp-dir zip-file)))]
     (when *verbose* (println "Successfully downloaded:" zip-path))
     (shell/with-sh-dir (:home env)
-      (sh "unzip" "-u" zip-path "-d" tldr-home)
-      (let [old (:path (io/file tldr-home "tldr"))
-            new (:path (io/file tldr-home "tldr-main"))]
-        (sh "rm" "-rf" old)
-        (sh "mv" new old)))
+      (sh "unzip" "-u" zip-path "-d" tldr-home))
     (when (io/directory? tmp-dir) (sh "rm" "-rf" tmp-dir))
     (spit cache-date (current-datetime))
     (println "Successfully updated local database")))
