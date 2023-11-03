@@ -8,3 +8,8 @@ Comply with [minium specifications](https://github.com/tldr-pages/tldr/wiki/Mini
 - [ ] It should follow the [full client specification](https://github.com/tldr-pages/tldr/blob/main/CLIENT-SPECIFICATION.md).
     - [ ] Support required cli options
       - [x] -v, --version Shows the current version of the client, and the version of this specification that it implements.
+      - [x] -p, --platform Specifies the platform, the selected platform MUST be checked first instead of the current platform
+      - [x] -u, --update Updates the offline cache of pages. MUST be implemented if caching is supported.
+      - [x] Clients MUST implement both the short and long versions of an option
+      - [x] Additional decoration MAY be printed if the standard output is a TTY. If not, then the output MUST not contain any additional decorations.
+
