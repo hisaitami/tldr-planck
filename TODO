@@ -3,6 +3,6 @@
 Comply with [minium specifications](https://github.com/tldr-pages/tldr/wiki/Minimum-specifications-for-tldr-pages-command-line-clients)
 
 - [ ] Clients should load the page archives from the static site https://tldr.sh/assets/tldr.zip
-- [ ] It should have installation instructions and setup requirements.
-- [ ] It should list supported features.
+- [x] It should have installation instructions and setup requirements.
+- [x] It should list supported features.
 - [ ] It should follow the [full client specification](https://github.com/tldr-pages/tldr/blob/main/CLIENT-SPECIFICATION.md).

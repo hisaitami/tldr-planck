@@ -4,7 +4,9 @@ A [TLDR pages](https://tldr.sh/) client written in Planck (Stand-alone ClojureSc
 
 ![tldr screenshot](screenshot.png)
 
-## Requirement
+## Getting Started
+
+### Prerequisites
 
 [Planck](https://planck-repl.org/), a stand-alone ClojureScript REPL for macOS and Linux based on JavaScriptCore.
 
@@ -12,6 +14,16 @@ On macOS:
 
 ```
 brew install planck
+```
+
+### Installation
+
+Copy this command `tldr.cljs` to a directory in your path. (~/bin, /usr/local/bin or somewhere)
+
+```
+chmod 755 tldr.cljs
+cp tldr.cljs /usr/local/bin
+tldr.cljs
 ```
 
 ## Usage
@@ -64,13 +76,13 @@ To control the cache:
  ```
  tldr.cljs --render /path/to/file.md
  ```
-## Settings
+## Configurations
 
 If the local database is older than two weeks, attempting to update it.
 To prevent automatic updates, set the environment variable `TLDR_AUTO_UPDATE_DISABLED`
 
 ```
-TLDR_AUTO_UPDATE_DISABLED=1 ./tldr.cljs
+TLDR_AUTO_UPDATE_DISABLED=1 tldr.cljs tar
 ```
 
 ## Referenced projects
