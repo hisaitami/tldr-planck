@@ -16,6 +16,8 @@ Comply with [minium specifications](https://github.com/tldr-pages/tldr/wiki/Mini
       - [x] The first argument that does not start with a dash (-), MUST be considered the page name.
       - [x] Page names MAY contain spaces (e.g. git status), and such page names MUST be transparently concatenated with dashes (-). For example, the page name git checkout becomes git-checkout.
       - [x] Page names MAY contain mixed capitalization, and such page names MUST be transparently lowercased. For example, the page name eyeD3 becomes eyed3.
-
+    - [x] Clients MUST default to displaying the page associated with the platform on which the client is running.
+    - [x] If a page is not available for the host platform, clients MUST fall back to the special common platform.
+    - [ ] If a page is not found, Clients that have control over their exit code on the command line (i.e. clients that provide a CLI) MUST exit with a non-zero exit code in addition to showing the above message.
 
 
