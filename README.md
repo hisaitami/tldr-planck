@@ -76,7 +76,7 @@ To control the cache:
  ```
  tldr.cljs --render /path/to/file.md
  ```
-## Configurations
+## Configuration
 
 If the local database is older than two weeks, attempting to update it.
 To prevent automatic updates, set the environment variable `TLDR_AUTO_UPDATE_DISABLED`
