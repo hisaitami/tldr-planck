@@ -38,6 +38,11 @@
 
 (def cache-date (io/file (:home env) tldr-home "date"))
 
+(defn die [& args]
+  (binding [*print-fn* *print-err-fn*]
+    (println (apply str args)))
+  (exit 1))
+
 (defn cache-path
   ([]
    (io/file (:home env) tldr-home pages-dir))
@@ -69,7 +74,7 @@
 
 (defn fetch [cache]
   (if (io/exists? cache) (slurp cache)
-    "This page doesn't exist yet!"))
+    (die "This page doesn't exist yet!")))
 
 (defn display
   ([page]
@@ -83,11 +88,6 @@
 (defn rand-page [platform]
   (let [path (cache-path platform)]
     (rand-nth (io/list-files path))))
-
-(defn die [& args]
-  (binding [*print-fn* *print-err-fn*]
-    (println (apply str args)))
-  (exit 1))
 
 (defn mkdtemp [template]
   (let [{:keys [out err]} (sh "mktemp" "-d" template)]
