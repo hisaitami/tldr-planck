@@ -36,9 +36,9 @@
 (defn pages-dir
   ([]
    (pages-dir (:lang env)))
-  ([l]
+  ([lang]
    (let [prefix "pages"
-         lang (->> (str l) (re-matches #"^([a-z]{2}(_[A-Z]{2})*).*$") second)
+         lang (-> (re-matches #"^([a-z]{2}(_[A-Z]{2})*).*$" (str lang)) second)
          cc (subs (str lang) 0 2)]
      (cond
        (empty? lang) prefix
@@ -60,9 +60,8 @@
   (let [lang (str (:lang env))
         language (reverse (s/split (str (:language env)) #":"))
         default (conj '("en") lang)]
-    (->> (if (empty? lang) default
-           (if (empty? language) default
-             (reduce conj default language)))
+    (->> (if (some empty? [lang language]) default
+           (reduce conj default language))
          (filter (complement empty?))
          distinct)))
 
