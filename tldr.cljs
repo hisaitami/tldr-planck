@@ -56,26 +56,22 @@
   ([lang platform page]
    (io/file (:home env) tldr-home (pages-dir lang) platform page)))
 
-(def language-list
+(def lang-priority-list
   (let [lang (str (:lang env))
-        language (str (:language env))
-        defaults (->> (conj '("en") lang)
-                      (filter (complement empty?))
-                      distinct)]
-    (if (empty? language) defaults
-      (->> (reverse (s/split language #":"))
-           (reduce conj defaults)
-           distinct))))
+        language (reverse (s/split (str (:language env)) #":"))
+        default (conj '("en") lang)]
+    (->> (if (empty? lang) default
+           (if (empty? language) default
+             (reduce conj default language)))
+         (filter (complement empty?))
+         distinct)))
 
-(defn lookup
-  ([platform page]
-   (lookup language-list (distinct (conj '("common") platform)) page))
-  ([languages platforms page]
-   (-> (for [lang languages
-             platform platforms
-             :let [path (cache-path lang platform page)]
-             :when (io/exists? path)]
-         path))))
+(defn lookup [platform page]
+  (for [lang lang-priority-list
+        platform (distinct (conj '("common") platform))
+        :let [path (cache-path lang platform page)]
+        :when (io/exists? path)]
+    path))
 
 (defn ansi-str [& coll]
   (let [colors {:reset "\u001b[0m"
