@@ -23,19 +23,6 @@
 
 (def page-suffix ".md")
 
-(def pages-dir
-  (let [prefix "pages"
-        lang (->> (str (:lang env)) (re-matches #"^([a-z]{2}(_[A-Z]{2})*).*$") second)
-        cc (subs (str lang) 0 2)]
-    (cond
-      (empty? lang) prefix
-      (= "en" cc) prefix
-      (#{"pt_BR" "pt_PT" "zh_TW"} lang) (s/join "." [prefix lang])
-      :else (s/join "." [prefix cc]))))
-
-(defn current-datetime []
-  (math/ceil (/ (.now js/Date) 1000)))
-
 (def cache-date (io/file (:home env) tldr-home "date"))
 
 (defn die [& args]
@@ -43,13 +30,52 @@
     (println (apply str args)))
   (exit 1))
 
+(defn current-datetime []
+  (math/ceil (/ (.now js/Date) 1000)))
+
+(defn pages-dir
+  ([]
+   (pages-dir (:lang env)))
+  ([l]
+   (let [prefix "pages"
+         lang (->> (str l) (re-matches #"^([a-z]{2}(_[A-Z]{2})*).*$") second)
+         cc (subs (str lang) 0 2)]
+     (cond
+       (empty? lang) prefix
+       (= "en" cc) prefix
+       (#{"pt_BR" "pt_PT" "zh_TW"} lang) (s/join "." [prefix lang])
+       :else (s/join "." [prefix cc])))))
+
 (defn cache-path
   ([]
-   (io/file (:home env) tldr-home pages-dir))
+   (io/file (:home env) tldr-home (pages-dir)))
   ([platform]
    (io/file (cache-path) platform))
   ([platform page]
-   (io/file (cache-path) platform page)))
+   (io/file (cache-path) platform page))
+  ([lang platform page]
+   (io/file (:home env) tldr-home (pages-dir lang) platform page)))
+
+(def language-list
+  (let [lang (str (:lang env))
+        language (str (:language env))
+        defaults (->> (conj '("en") lang)
+                      (filter (complement empty?))
+                      distinct)]
+    (if (empty? language) defaults
+      (->> (reverse (s/split language #":"))
+           (reduce conj defaults)
+           distinct))))
+
+(defn lookup
+  ([platform page]
+   (lookup language-list (distinct (conj '("common") platform)) page))
+  ([languages platforms page]
+   (-> (for [lang languages
+             platform platforms
+             :let [path (cache-path lang platform page)]
+             :when (io/exists? path)]
+         path))))
 
 (defn ansi-str [& coll]
   (let [colors {:reset "\u001b[0m"
@@ -81,9 +107,8 @@
    (println)
    (println (format (fetch page))))
   ([platform page]
-   (let [cache (cache-path platform page)]
-     (if (io/exists? cache) (display cache)
-       (display (cache-path "common" page))))))
+   (let [cache (first (lookup platform page))]
+     (display cache))))
 
 (defn rand-page [platform]
   (let [path (cache-path platform)]
@@ -119,7 +144,7 @@
 
 (defn list-localdb [platform]
   (let [path (cache-path platform)]
-    (or (io/exists? path) (update-localdb))
+    (or (io/exists? path) (die "Can't open cache directory:" path))
     (println (format "# Pages for"))
     (doseq [file (io/list-files path)]
       (let [r (re-pattern (str page-suffix "$"))

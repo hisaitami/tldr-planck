@@ -5,7 +5,7 @@ Comply with [minium specifications](https://github.com/tldr-pages/tldr/wiki/Mini
 - [x] Clients should load the page archives from the static site https://tldr.sh/assets/tldr.zip
 - [x] It should have installation instructions and setup requirements.
 - [x] It should list supported features.
-- [ ] It should follow the [full client specification](https://github.com/tldr-pages/tldr/blob/main/CLIENT-SPECIFICATION.md).
+- [x] It should follow the [full client specification](https://github.com/tldr-pages/tldr/blob/main/CLIENT-SPECIFICATION.md).
     - [x] Support required cli options
       - [x] -v, --version Shows the current version of the client, and the version of this specification that it implements.
       - [x] -p, --platform Specifies the platform, the selected platform MUST be checked first instead of the current platform
@@ -19,8 +19,8 @@ Comply with [minium specifications](https://github.com/tldr-pages/tldr/wiki/Mini
     - [x] Clients MUST default to displaying the page associated with the platform on which the client is running.
     - [x] If a page is not available for the host platform, clients MUST fall back to the special common platform.
     - [x] If a page is not found, Clients that have control over their exit code on the command line (i.e. clients that provide a CLI) MUST exit with a non-zero exit code in addition to showing the above message.
-    - [ ] If a client has access to environment variables, it MUST use them to derive the preferred user language
+    - [x] If a client has access to environment variables, it MUST use them to derive the preferred user language
       - [x] The LANG environment variable specifies the user's preferred locale (in the form ll[_CC][.encoding]).
-      - [ ] The LANGUAGE environment variable specifies a priority list of locales (in the form l1:l2:...) that can be used if the locale defined by LANG is not available.
-      - [ ] Both LANG and LANGUAGE may contain the values C or POSIX, which should be ignored.
+      - [x] The LANGUAGE environment variable specifies a priority list of locales (in the form l1:l2:...) that can be used if the locale defined by LANG is not available.
+      - [x] Both LANG and LANGUAGE may contain the values C or POSIX, which should be ignored.
 
