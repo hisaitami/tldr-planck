@@ -129,12 +129,12 @@
                  "local database")))))
 
 (defn list-localdb [platform]
-  (let [path (cache-path platform)]
+  (let [path (cache-path platform)
+        re (re-pattern (str page-suffix "$"))]
     (or (io/exists? path) (die "Can't open cache directory:" path))
     (println (format "# Pages for"))
     (doseq [file (io/list-files path)]
-      (let [r (re-pattern (str page-suffix "$"))
-            entry (s/replace (io/file-name file) r "")]
+      (let [entry (s/replace (io/file-name file) re "")]
         (println entry)))))
 
 (defn check-localdb []
