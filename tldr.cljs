@@ -27,10 +27,10 @@
 
 (def lang-priority-list
   (let [lang (str (:lang env))
-        language (reverse (s/split (str (:language env)) #":"))
-        default (conj '("en") lang)]
+        language (s/split (str (:language env)) #":")
+        default [lang "en"]]
     (->> (if (some empty? [lang language]) default
-           (reduce conj default language))
+           (concat language default))
          (filter (complement empty?))
          distinct)))
 
@@ -44,7 +44,7 @@
 
 (defn pages-dir [lang]
   (let [prefix "pages"
-        lang (-> (re-matches #"^([a-z]{2}(_[A-Z]{2})*).*$" (str lang)) second)
+        lang (second (re-matches #"^([a-z]{2}(_[A-Z]{2})*).*$" (str lang)))
         cc (subs (str lang) 0 2)]
     (cond
       (empty? lang) prefix
@@ -62,7 +62,7 @@
 
 (defn lookup [platform page]
   (for [lang lang-priority-list
-        platform (distinct (conj '("common") platform))
+        platform (distinct [platform "common"])
         :let [path (cache-path lang platform page)]
         :when (io/exists? path)]
     path))
