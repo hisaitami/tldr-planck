@@ -88,14 +88,10 @@
         (parse #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
         (parse #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red)))))
 
-(defn fetch [file]
-  (if (io/exists? file) (slurp file)
-    (die "This page doesn't exist yet!")))
-
 (defn display
   ([file]
-   (println)
-   (println (format (fetch file))))
+   (or (io/exists? file) (die "This page doesn't exist yet!"))
+   (->> (format (slurp file)) (str \newline) println))
   ([platform page]
    (let [file (first (lookup platform page))]
      (display file))))
