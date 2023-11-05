@@ -25,37 +25,6 @@
 
 (def cache-date (io/file (:home env) tldr-home "date"))
 
-(defn die [& args]
-  (binding [*print-fn* *print-err-fn*]
-    (println (apply str args)))
-  (exit 1))
-
-(defn current-datetime []
-  (math/ceil (/ (.now js/Date) 1000)))
-
-(defn pages-dir
-  ([]
-   (pages-dir (:lang env)))
-  ([lang]
-   (let [prefix "pages"
-         lang (-> (re-matches #"^([a-z]{2}(_[A-Z]{2})*).*$" (str lang)) second)
-         cc (subs (str lang) 0 2)]
-     (cond
-       (empty? lang) prefix
-       (= "en" cc) prefix
-       (#{"pt_BR" "pt_PT" "zh_TW"} lang) (s/join "." [prefix lang])
-       :else (s/join "." [prefix cc])))))
-
-(defn cache-path
-  ([]
-   (io/file (:home env) tldr-home (pages-dir)))
-  ([platform]
-   (io/file (cache-path) platform))
-  ([platform page]
-   (io/file (cache-path) platform page))
-  ([lang platform page]
-   (io/file (:home env) tldr-home (pages-dir lang) platform page)))
-
 (def lang-priority-list
   (let [lang (str (:lang env))
         language (reverse (s/split (str (:language env)) #":"))
@@ -64,6 +33,32 @@
            (reduce conj default language))
          (filter (complement empty?))
          distinct)))
+
+(defn die [& args]
+  (binding [*print-fn* *print-err-fn*]
+    (println (apply str args)))
+  (exit 1))
+
+(defn current-datetime []
+  (math/ceil (/ (.now js/Date) 1000)))
+
+(defn pages-dir [lang]
+  (let [prefix "pages"
+        lang (-> (re-matches #"^([a-z]{2}(_[A-Z]{2})*).*$" (str lang)) second)
+        cc (subs (str lang) 0 2)]
+    (cond
+      (empty? lang) prefix
+      (= "en" cc) prefix
+      (#{"pt_BR" "pt_PT" "zh_TW"} lang) (s/join "." [prefix lang])
+      :else (s/join "." [prefix cc]))))
+
+(defn cache-path
+  ([]
+   (io/file (:home env) tldr-home))
+  ([platform]
+   (io/file (cache-path) (pages-dir (first lang-priority-list)) platform))
+  ([lang platform page]
+   (io/file (cache-path) (pages-dir lang) platform page)))
 
 (defn lookup [platform page]
   (for [lang lang-priority-list
