@@ -88,17 +88,17 @@
         (parse #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
         (parse #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red)))))
 
-(defn fetch [cache]
-  (if (io/exists? cache) (slurp cache)
+(defn fetch [file]
+  (if (io/exists? file) (slurp file)
     (die "This page doesn't exist yet!")))
 
 (defn display
-  ([page]
+  ([file]
    (println)
-   (println (format (fetch page))))
+   (println (format (fetch file))))
   ([platform page]
-   (let [cache (first (lookup platform page))]
-     (display cache))))
+   (let [file (first (lookup platform page))]
+     (display file))))
 
 (defn rand-page [platform]
   (let [path (cache-path platform)]
