@@ -76,6 +76,35 @@ To control the cache:
  ```
  tldr.cljs --render /path/to/file.md
  ```
+
+### Use REPL
+
+Start REPL from terminal.
+
+```shell
+% plk
+ClojureScript 1.11.60
+cljs.user=>
+```
+
+Load `tldr.cljs` and change ns to `tldr.core`.
+
+```clojure
+cljs.user=> (load-file "tldr.cljs")
+nil
+cljs.user=> (ns tldr.core)
+nil
+```
+Call display function as follows:
+
+```clojure
+;; display page from the osx platform at random
+tldr.core=> (display (rand-page "osx"))
+
+;; display specified page (requires .md extension for the page name)
+tldr.core=> (display "linux" "tar.md")
+```
+
 ## Configuration
 
 If the local database is older than two weeks, attempting to update it.
