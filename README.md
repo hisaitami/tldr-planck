@@ -94,6 +94,7 @@ cljs.user=> (load-file "tldr.cljs")
 nil
 cljs.user=> (ns tldr.core)
 nil
+tldr.core=>
 ```
 Call display function as follows:
 
