@@ -79,12 +79,10 @@ To control the cache:
 
 ### Use REPL
 
-Start REPL from terminal.
+Start Planck REPL in a terminal window.
 
-```shell
-% plk
-ClojureScript 1.11.60
-cljs.user=>
+```
+plk
 ```
 
 Load `tldr.cljs` and change ns to `tldr.core`.
@@ -96,7 +94,8 @@ cljs.user=> (ns tldr.core)
 nil
 tldr.core=>
 ```
-Call display function as follows:
+
+Call `display` function as follows:
 
 ```clojure
 ;; display page from the osx platform at random
@@ -106,7 +105,7 @@ tldr.core=> (display (rand-page "osx"))
 tldr.core=> (display "linux" "tar.md")
 
 ;; to change the display language (this may occur warning message)
-(binding [lang-priority-list ["ja" "en"]] (display "linux" "tar.md"))
+tldr.core=> (binding [lang-priority-list ["ja" "en"]] (display "linux" "tar.md"))
 ```
 
 ## Configuration
