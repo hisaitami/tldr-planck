@@ -15,6 +15,8 @@
 
 (def ^:dynamic *force-color* false)
 
+(def ^:dynamic *exit-on-error* false)
+
 (def tldr-home ".tldrc")
 
 (def zip-file "tldr.zip")
@@ -35,9 +37,11 @@
          distinct)))
 
 (defn die [& args]
-  (binding [*print-fn* *print-err-fn*]
-    (println (apply str args)))
-  (exit 1))
+  (let [msg (apply str args)]
+    (if-not *exit-on-error* (throw (js/Error. msg))
+      (binding [*print-fn* *print-err-fn*]
+        (println msg)
+        (exit 1)))))
 
 (defn current-datetime []
   (math/ceil (/ (.now js/Date) 1000)))
@@ -212,6 +216,7 @@
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
         platform (select-platform options)]
 
+    (set! *exit-on-error* true)
     (when errors
       (die "The following errors occurred while parsing your command:\n\n"
            (s/join \newline errors)))
