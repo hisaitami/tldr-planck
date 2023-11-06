@@ -104,6 +104,9 @@ tldr.core=> (display (rand-page "osx"))
 
 ;; display specified page (requires .md extension for the page name)
 tldr.core=> (display "linux" "tar.md")
+
+;; to change the display language (this may occur warning message)
+(binding [lang-priority-list ["ja" "en"]] (display "linux" "tar.md"))
 ```
 
 ## Configuration
