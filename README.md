@@ -108,6 +108,8 @@ tldr.core=> (display "linux" "tar.md")
 tldr.core=> (binding [lang-priority-list ["ja" "en"]] (display "linux" "tar.md"))
 ```
 
+NOTE: Don't call -main. Otherwise, REPL will terminate.
+
 ## Configuration
 
 If the local database is older than two weeks, attempting to update it.
