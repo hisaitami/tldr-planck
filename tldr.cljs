@@ -33,7 +33,7 @@
         default [lang "en"]]
     (->> (if (some empty? [lang language]) default
            (concat language default))
-         (filter (complement empty?))
+         (remove empty?)
          distinct)))
 
 (defn die [& args]
