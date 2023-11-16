@@ -29,7 +29,7 @@ tldr.cljs
 ## Usage
 
 ```
-usage: tldr.cljs [-v] [OPTION]... SEARCH
+usage: tldr.cljs [--verbose] [OPTION]... SEARCH
 
 available commands:
       --verbose              print verbose output
