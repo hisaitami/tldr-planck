@@ -194,7 +194,7 @@
 (def version "tldr.cljs v0.7.2 (spec v2.0)")
 
 (defn usage [options-summary]
-  (->> ["usage: tldr.cljs [-v] [OPTION]... SEARCH\n"
+  (->> ["usage: tldr.cljs [--verbose] [OPTION]... SEARCH\n"
         "available commands:"
         options-summary]
        (s/join \newline)))
