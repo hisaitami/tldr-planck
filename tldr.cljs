@@ -119,7 +119,7 @@
         zip-path (download-zip zip-url (:path (io/file tmp-dir zip-file)))]
     (when *verbose* (println "Successfully downloaded:" zip-path))
     (shell/with-sh-dir (:home env)
-      (sh "unzip" "-q" "-u" "-o" zip-path "-d" tldr-home))
+      (sh "unzip" "-q" "-uo" zip-path "-d" tldr-home))
     (when (io/directory? tmp-dir) (sh "rm" "-rf" tmp-dir))
     (spit cache-date (current-datetime))
     (println "Successfully updated local database")))
