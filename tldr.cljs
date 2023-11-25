@@ -191,7 +191,7 @@
                    :default-desc ""]
                   [nil, "--random" "show a random command"]])
 
-(def version "tldr.cljs v0.7.2 (spec v2.0)")
+(def version "tldr.cljs v0.7.3 (spec v2.0)")
 
 (defn usage [options-summary]
   (->> ["usage: tldr.cljs [--verbose] [OPTION]... SEARCH\n"
