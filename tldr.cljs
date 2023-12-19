@@ -165,36 +165,31 @@
         "Windows" "windows"
         "common"))))
 
-(def cli-options [[nil "--verbose" "print verbose output"
-                   :id :verbose
+(def cli-options [["-h" "--help" "print this help and exit"]
+                  ["-C" "--color" "force color display"
                    :default false
                    :default-desc ""]
-                  ["-v" "--version" "print version and exit"]
-                  ["-h" "--help" "print this help and exit"]
-                  ["-u" "--update" "update local database"]
-                  ["-c" "--clear-cache" "clear local database"]
-                  ["-l" "--list" "list all entries in the local database"]
                   ["-p" "--platform PLATFORM"
-                   "select platform, supported are common / linux / osx / sunos / windows"
+                   "select platform, supported are linux / osx / sunos / windows / common"
                    :default-fn default-platform
                    :default-desc ""
-                   :validate [#(contains? #{"common" "linux" "osx" "sunos" "windows"} %)
-                              "supported are common / linux / osx / sunos / windows"]]
-                  [nil, "--linux" "show command page for Linux"]
-                  [nil, "--osx" "show command page for OSX"]
-                  [nil, "--sunos" "show command page for SunOS"]
-                  [nil, "--windows" "show command page for Windows"]
+                   :validate [#(contains? #{"linux" "osx" "sunos" "windows" "common"} %)
+                              "supported are linux / osx / sunos / windows / common"]]
                   ["-r" "--render PATH" "render a local page for testing purposes"
                    :validate [#(io/exists? %) "file does not exist"]]
-                  ["-C", "--color" "force color display"
+                  ["-u" "--update" "update local database"]
+                  ["-v" "--version" "print version and exit"]
+                  ["-c" "--clear-cache" "clear local database"]
+                  ["-V" "--verbose" "display verbose output"
                    :default false
                    :default-desc ""]
+                  ["-l" "--list" "list all entries in the local database"]
                   [nil, "--random" "show a random command"]])
 
 (def version "tldr.cljs v0.7.3 (spec v2.0)")
 
 (defn usage [options-summary]
-  (->> ["usage: tldr.cljs [--verbose] [OPTION]... SEARCH\n"
+  (->> ["usage: tldr.cljs [OPTION]... PAGE\n"
         "available commands:"
         options-summary]
        (s/join \newline)))
