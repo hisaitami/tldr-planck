@@ -29,22 +29,18 @@ tldr.cljs
 ## Usage
 
 ```
-usage: tldr.cljs [--verbose] [OPTION]... SEARCH
+usage: tldr.cljs [OPTION]... PAGE
 
 available commands:
-      --verbose              print verbose output
-  -v, --version              print version and exit
   -h, --help                 print this help and exit
-  -u, --update               update local database
-  -c, --clear-cache          clear local database
-  -l, --list                 list all entries in the local database
-  -p, --platform PLATFORM    select platform, supported are common / linux / osx / sunos / windows
-      --linux                show command page for Linux
-      --osx                  show command page for OSX
-      --sunos                show command page for SunOS
-      --windows              show command page for Windows
-  -r, --render PATH          render a local page for testing purposes
   -C, --color                force color display
+  -p, --platform PLATFORM    select platform, supported are linux / osx / sunos / windows / common
+  -r, --render PATH          render a local page for testing purposes
+  -u, --update               update local database
+  -v, --version              print version and exit
+  -c, --clear-cache          clear local database
+  -V, --verbose              display verbose output
+  -l, --list                 list all entries in the local database
       --random               show a random command
 ```
 
