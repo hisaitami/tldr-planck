@@ -220,28 +220,28 @@
     (set! *force-color* (:color options))
 
     (condp has-key? options
-      :version ;; show version info
-      (println version)
+      ;; show version info
+      :version (println version)
 
-      :help ;; show usage summary
-      (println (usage summary))
+      ;; show usage summary
+      :help (println (usage summary))
 
-      :update ;; update local database
-      (update-localdb)
+      ;; update local database
+      :update (update-localdb)
 
-      :clear-cache ;; clear local database
-      (clear-localdb)
+      ;; clear local database
+      :clear-cache (clear-localdb)
 
-      :list ;; list all entries in the local database
-      (list-localdb platform)
+      ;; list all entries in the local database
+      :list (list-localdb platform)
 
-      :render ;; render a local page for testing purposes
-      (let [page (:render options)]
-        (display page))
+      ;; render a local page for testing purposes
+      :render (let [page (:render options)]
+                (display page))
 
-      :random ;; show a random command
-      (let [page (rand-page platform)]
-        (display page))
+      ;; show a random command
+      :random (let [page (rand-page platform)]
+                (display page))
 
       ;; if no argument is given, show usage and exit as failure,
       ;; otherwise display the specified page
