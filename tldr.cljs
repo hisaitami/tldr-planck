@@ -236,12 +236,10 @@
       :list (list-localdb platform)
 
       ;; render a local page for testing purposes
-      :render (let [page (:render options)]
-                (display page))
+      :render (display (:render options))
 
       ;; show a random command
-      :random (let [page (rand-page platform)]
-                (display page))
+      :random (display (rand-page platform))
 
       ;; if no argument is given, show usage and exit as failure,
       ;; otherwise display the specified page
