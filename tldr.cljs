@@ -90,7 +90,8 @@
         (s/replace #"(?m):\n$" ":")
         (parse #"(?m)^(- .+)" (ansi-str :green "$1" :reset))
         (parse #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
-        (parse #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red)))))
+        (parse #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red))
+        (s/replace #"\\{|\\}" {"\\{" "{" "\\}" "}"}))))
 
 (defn display
   ([file]
