@@ -91,7 +91,7 @@
         (parse #"(?m)^(- .+)" (ansi-str :green "$1" :reset))
         (parse #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
         (parse #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red))
-        (s/replace #"\\{|\\}" {"\\{" "{" "\\}" "}"}))))
+        (s/replace #"\\({|})" "$1"))))
 
 (defn display
   ([file]
