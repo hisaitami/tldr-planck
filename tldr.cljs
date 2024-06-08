@@ -187,7 +187,7 @@
                   ["-l" "--list" "list all entries in the local database"]
                   [nil, "--random" "show a random command"]])
 
-(def version "tldr.cljs v0.7.4 (spec v2.0)")
+(def version "tldr.cljs v0.7.5 (spec v2.1)")
 
 (defn usage [options-summary]
   (->> ["usage: tldr.cljs [OPTION]... PAGE\n"
