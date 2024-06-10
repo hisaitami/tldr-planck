@@ -21,7 +21,7 @@
 
 (def zip-file "tldr.zip")
 
-(def zip-url (str "https://tldr.sh/assets/" zip-file))
+(def zip-url (str "https://github.com/tldr-pages/tldr/releases/latest/download/" zip-file))
 
 (def page-suffix ".md")
 
@@ -187,7 +187,7 @@
                   ["-l" "--list" "list all entries in the local database"]
                   [nil, "--random" "show a random command"]])
 
-(def version "tldr.cljs v0.7.5 (spec v2.1)")
+(def version "tldr.cljs v0.7.6 (spec v2.2)")
 
 (defn usage [options-summary]
   (->> ["usage: tldr.cljs [OPTION]... PAGE\n"
