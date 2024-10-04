@@ -57,7 +57,7 @@ To display pages in the specified language (such as `ja`, `pt_BR`, or `fr`):
 
 ```
 LANG=ja tldr.cljs less
-LANG=fr tldr.cljs --random -p osx
+LANG=fr tldr.cljs --random -p linux
 ```
 
 To control the cache:
@@ -86,22 +86,20 @@ Load `tldr.cljs` and change ns to `tldr.core`.
 ```clojure
 cljs.user=> (load-file "tldr.cljs")
 nil
-cljs.user=> (ns tldr.core)
-nil
-tldr.core=>
+cljs.user=>
 ```
 
 Call `display` function as follows:
 
 ```clojure
 ;; display page from the osx platform at random
-tldr.core=> (display (rand-page "osx"))
+cljs.user=> (display (rand-page "linux"))
 
 ;; display specified page (requires .md extension for the page name)
-tldr.core=> (display "linux" "tar.md")
+cljs.user=> (display "linux" "tar.md")
 
 ;; to change the display language (this may occur warning message)
-tldr.core=> (binding [lang-priority-list ["ja" "en"]] (display "linux" "tar.md"))
+cljs.user=> (binding [lang-priority-list ["ja" "en"]] (display "linux" "tar.md"))
 ```
 
 NOTE: Don't call -main. Otherwise, REPL will terminate.
