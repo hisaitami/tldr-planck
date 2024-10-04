@@ -164,26 +164,26 @@
         "Windows" "windows"
         "common"))))
 
-(def cli-options [["-h" "--help" "print this help and exit"]
-                  ["-C" "--color" "force color display"
-                   :default false
-                   :default-desc ""]
-                  ["-p" "--platform PLATFORM"
-                   "select platform, supported are linux / osx / sunos / windows / common"
-                   :default-fn default-platform
-                   :default-desc ""
-                   :validate [#(contains? #{"linux" "osx" "sunos" "windows" "common"} %)
-                              "supported are linux / osx / sunos / windows / common"]]
-                  ["-r" "--render PATH" "render a local page for testing purposes"
-                   :validate [#(io/exists? %) "file does not exist"]]
-                  ["-u" "--update" "update local database"]
-                  ["-v" "--version" "print version and exit"]
-                  ["-c" "--clear-cache" "clear local database"]
-                  ["-V" "--verbose" "display verbose output"
-                   :default false
-                   :default-desc ""]
-                  ["-l" "--list" "list all entries in the local database"]
-                  [nil, "--random" "show a random command"]])
+(def cli-spec [["-h" "--help" "print this help and exit"]
+               ["-C" "--color" "force color display"
+                :default false
+                :default-desc ""]
+               ["-p" "--platform PLATFORM"
+                "select platform, supported are linux / osx / sunos / windows / common"
+                :default-fn default-platform
+                :default-desc ""
+                :validate [#(contains? #{"linux" "osx" "sunos" "windows" "common"} %)
+                           "supported are linux / osx / sunos / windows / common"]]
+               ["-r" "--render PATH" "render a local page for testing purposes"
+                :validate [#(io/exists? %) "file does not exist"]]
+               ["-u" "--update" "update local database"]
+               ["-v" "--version" "print version and exit"]
+               ["-c" "--clear-cache" "clear local database"]
+               ["-V" "--verbose" "display verbose output"
+                :default false
+                :default-desc ""]
+               ["-l" "--list" "list all entries in the local database"]
+               [nil, "--random" "show a random command"]])
 
 (def version "tldr.cljs v0.7.6 (spec v2.2)")
 
@@ -207,7 +207,7 @@
 (defn -main
   "The main entry point of this program."
   [& args]
-  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
+  (let [{:keys [options arguments errors summary]} (parse-opts args cli-spec)
         platform (select-platform options)]
 
     (set! *exit-on-error* true)
