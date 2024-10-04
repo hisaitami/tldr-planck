@@ -1,15 +1,13 @@
 #!/usr/bin/env bash
 "exec" "plk" "-Sdeps" "{:deps {org.clojure/tools.cli {:mvn/version \"1.1.230\"}}}" "-sf" "$0" "$@"
 
-(ns tldr.core
-  "A planck based command-line client for tldr"
-  (:require [planck.core :refer [slurp spit exit]]
-            [planck.environ :refer [env]]
-            [planck.io :as io]
-            [planck.shell :as shell :refer [sh]]
-            [clojure.math :as math]
-            [clojure.string :as str]
-            [clojure.tools.cli :refer [parse-opts]]))
+(require '[planck.core :refer [slurp spit exit]]
+         '[planck.environ :refer [env]]
+         '[planck.io :as io]
+         '[planck.shell :as shell :refer [sh]]
+         '[clojure.math :as math]
+         '[clojure.string :as str]
+         '[clojure.tools.cli :refer [parse-opts]])
 
 (def ^:dynamic *verbose* false)
 
