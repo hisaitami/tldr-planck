@@ -79,7 +79,7 @@
                 :bright-white "\u001b[37;1m"}]
     (apply str (replace colors coll))))
 
-(defn format [content]
+(defn md->ansi-str [content]
   (let [color? (or *force-color* (and (empty? (:no-color env)) (io/tty? *out*)))
         parse (fn [s m r] (str/replace s m (if color? r "$1")))]
     (-> content
@@ -94,7 +94,7 @@
 (defn display
   ([file]
    (or (io/exists? file) (die "This page doesn't exist yet!"))
-   (->> (format (slurp file)) (str \newline) println))
+   (->> (md->ansi-str (slurp file)) (str \newline) println))
   ([platform page]
    (let [file (first (lookup platform page))]
      (display file))))
@@ -135,7 +135,7 @@
   (let [path (cache-path platform)
         re (re-pattern (str page-suffix "$"))]
     (or (io/exists? path) (die "Can't open cache directory:" path))
-    (println (format "# Pages for"))
+    (println (md->ansi-str "# Pages for"))
     (doseq [file (io/list-files path)]
       (let [entry (str/replace (io/file-name file) re "")]
         (println entry)))))
@@ -244,7 +244,7 @@
       ;; otherwise display the specified page
       (if (empty? arguments) (die (usage summary))
         (let [update? (empty? (:tldr-auto-update-disabled env))
-              page (-> (str/join "-" arguments) (str/lower-case) (str page-suffix) (io/file-name))]
+              page (-> (str/join "-" arguments) str/lower-case (str page-suffix) io/file-name)]
           (when update? (check-localdb))
           (display platform page))))))
 
