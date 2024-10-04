@@ -4,11 +4,11 @@
 (ns tldr.core
   "A planck based command-line client for tldr"
   (:require [planck.core :refer [slurp spit exit]]
-            [planck.io :as io]
             [planck.environ :refer [env]]
+            [planck.io :as io]
             [planck.shell :as shell :refer [sh]]
-            [clojure.string :as s]
             [clojure.math :as math]
+            [clojure.string :as str]
             [clojure.tools.cli :refer [parse-opts]]))
 
 (def ^:dynamic *verbose* false)
@@ -29,7 +29,7 @@
 
 (def lang-priority-list
   (let [lang (str (:lang env))
-        language (s/split (str (:language env)) #":")
+        language (str/split (str (:language env)) #":")
         default [lang "en"]]
     (->> (if (some empty? [lang language]) default
            (concat language default))
@@ -53,8 +53,8 @@
     (cond
       (empty? lang) prefix
       (= "en" cc) prefix
-      (#{"pt_BR" "pt_PT" "zh_TW"} lang) (s/join "." [prefix lang])
-      :else (s/join "." [prefix cc]))))
+      (#{"pt_BR" "pt_PT" "zh_TW"} lang) (str/join "." [prefix lang])
+      :else (str/join "." [prefix cc]))))
 
 (defn cache-path
   ([]
@@ -83,15 +83,15 @@
 
 (defn format [content]
   (let [color? (or *force-color* (and (empty? (:no-color env)) (io/tty? *out*)))
-        parse (fn [s m r] (s/replace s m (if color? r "$1")))]
+        parse (fn [s m r] (str/replace s m (if color? r "$1")))]
     (-> content
         (parse #"^#\s+(.+)" (ansi-str :bright-white "$1" :reset))
         (parse #"(?m)^> (.+)" (ansi-str :white "$1" :reset))
-        (s/replace #"(?m):\n$" ":")
+        (str/replace #"(?m):\n$" ":")
         (parse #"(?m)^(- .+)" (ansi-str :green "$1" :reset))
         (parse #"(?m)^`(.+)`$" (ansi-str :red "    $1" :reset))
         (parse #"\{\{(.+?)\}\}" (ansi-str :reset :blue "$1" :red))
-        (s/replace #"\\({|})" "$1"))))
+        (str/replace #"\\({|})" "$1"))))
 
 (defn display
   ([file]
@@ -108,7 +108,7 @@
 (defn mkdtemp [template]
   (let [{:keys [out err]} (sh "mktemp" "-d" template)]
     (or (empty? err) (die "Error: Creating Directory:" template))
-    (s/trim out)))
+    (str/trim out)))
 
 (defn download-zip [url path]
   (let [{:keys [err]} (sh "curl" "-sL" url "-o" path)]
@@ -139,7 +139,7 @@
     (or (io/exists? path) (die "Can't open cache directory:" path))
     (println (format "# Pages for"))
     (doseq [file (io/list-files path)]
-      (let [entry (s/replace (io/file-name file) re "")]
+      (let [entry (str/replace (io/file-name file) re "")]
         (println entry)))))
 
 (defn check-localdb []
@@ -158,7 +158,7 @@
 (defn- default-platform []
   (let [{:keys [out err]} (sh "uname" "-s")]
     (or (empty? err) (die "Error: Unknown platform"))
-    (let [sysname (s/trim out)]
+    (let [sysname (str/trim out)]
       (case sysname
         "Linux" "linux"
         "Darwin" "osx"
@@ -193,7 +193,7 @@
   (->> ["usage: tldr.cljs [OPTION]... PAGE\n"
         "available commands:"
         options-summary]
-       (s/join \newline)))
+       (str/join \newline)))
 
 (defn- has-key? [m k]
   (contains? k m))
@@ -215,7 +215,7 @@
     (set! *exit-on-error* true)
     (when errors
       (die "The following errors occurred while parsing your command:\n\n"
-           (s/join \newline errors)))
+           (str/join \newline errors)))
 
     (set! *verbose* (:verbose options))
     (set! *force-color* (:color options))
@@ -246,7 +246,7 @@
       ;; otherwise display the specified page
       (if (empty? arguments) (die (usage summary))
         (let [update? (empty? (:tldr-auto-update-disabled env))
-              page (-> (s/join "-" arguments) (s/lower-case) (str page-suffix) (io/file-name))]
+              page (-> (str/join "-" arguments) (str/lower-case) (str page-suffix) (io/file-name))]
           (when update? (check-localdb))
           (display platform page))))))
 
