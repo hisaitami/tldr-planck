@@ -122,6 +122,6 @@ TLDR_AUTO_UPDATE_DISABLED=1 tldr.cljs tar
 
 ## License
 
-Copyright (c) 2025 hisaitami
+Copyright (c) 2026 hisaitami
 
 Distributed under the terms of the [MIT License](LICENSE)
